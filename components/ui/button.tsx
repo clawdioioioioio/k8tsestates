@@ -12,15 +12,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+          "inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
           {
-            "bg-brand-700 text-white hover:bg-brand-800 active:bg-brand-900": variant === "primary",
-            "bg-gold-500 text-brand-900 hover:bg-gold-600 active:bg-gold-700": variant === "secondary",
-            "border-2 border-brand-700 text-brand-700 hover:bg-brand-50 active:bg-brand-100": variant === "outline",
-            "text-brand-700 hover:bg-brand-50 active:bg-brand-100": variant === "ghost",
-            "px-4 py-2 text-sm rounded-md": size === "sm",
-            "px-6 py-3 text-base rounded-lg": size === "md",
-            "px-8 py-4 text-lg rounded-xl": size === "lg",
+            "bg-brand-900 text-white hover:bg-brand-800 active:bg-brand-950 shadow-lg shadow-brand-900/20 hover:shadow-xl hover:shadow-brand-900/30": variant === "primary",
+            "bg-gradient-to-r from-gold-500 to-gold-600 text-brand-900 hover:from-gold-400 hover:to-gold-500 shadow-lg shadow-gold-500/20": variant === "secondary",
+            "border-2 border-brand-300 text-brand-700 hover:border-brand-900 hover:bg-brand-50": variant === "outline",
+            "text-brand-700 hover:bg-brand-100": variant === "ghost",
+            "px-5 py-2.5 text-sm rounded-lg": size === "sm",
+            "px-7 py-3.5 text-base rounded-xl": size === "md",
+            "px-9 py-4.5 text-lg rounded-xl": size === "lg",
           },
           className
         )}

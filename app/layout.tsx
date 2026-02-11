@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ 
@@ -7,18 +7,19 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const playfair = Playfair_Display({ 
+const cormorant = Cormorant_Garamond({ 
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cormorant",
 });
 
 export const metadata: Metadata = {
-  title: "K8ts Estates | Katherine Minovski | Southern Ontario Real Estate & Business Brokerage",
-  description: "Expert real estate and business brokerage services in Southern Ontario. Residential, commercial, and business sales with Katherine Minovski, Broker at RE/MAX.",
-  keywords: "real estate, business broker, Southern Ontario, Vaughan, Markham, Toronto, commercial, residential, RE/MAX",
+  title: "K8ts Estates | Katherine Minovski | Luxury Real Estate & Business Advisory",
+  description: "Bespoke real estate and business advisory services powered by cutting-edge technology and white-glove service. Experience the future of real estate with Katherine Minovski.",
+  keywords: "luxury real estate, business broker, Southern Ontario, AI-powered, white glove service, Vaughan, Toronto, RE/MAX",
   openGraph: {
-    title: "K8ts Estates | Katherine Minovski",
-    description: "Expert real estate and business brokerage services in Southern Ontario.",
+    title: "K8ts Estates | Where Technology Meets Trust",
+    description: "Bespoke real estate and business advisory services. Experience the future of real estate.",
     type: "website",
   },
 };
@@ -29,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="bg-white text-brand-900 antialiased">
+    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+      <body className="bg-brand-50 text-brand-900 antialiased">
         {children}
       </body>
     </html>

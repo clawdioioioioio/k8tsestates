@@ -11,7 +11,13 @@ import {
   Phone,
   Mail,
   MapPin,
-  ArrowRight
+  ArrowRight,
+  Sparkles,
+  Shield,
+  Heart,
+  Target,
+  Zap,
+  MessageCircle
 } from "lucide-react";
 
 export default function HomePage() {
@@ -19,518 +25,489 @@ export default function HomePage() {
     <>
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-50 via-white to-brand-100" />
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-800 hidden lg:block" 
-          style={{ clipPath: "polygon(20% 0, 100% 0, 100% 100%, 0% 100%)" }} 
-        />
+      {/* Hero Section - Refined & Prestigious */}
+      <section className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-50 via-white to-brand-100/50" />
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-0 w-96 h-96 bg-gold-400/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-0 w-80 h-80 bg-brand-200/30 rounded-full blur-3xl" />
         
         <div className="container mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 bg-gold-500/20 text-gold-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Award className="h-4 w-4" />
-                RE/MAX Broker | Since 2016
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-brand-900 leading-tight mb-6">
-                Real Estate &<br />
-                <span className="text-gold-500">Business Brokerage</span><br />
-                Excellence
-              </h1>
-              
-              <p className="text-lg text-brand-600 mb-8 leading-relaxed">
-                From residential homes to commercial properties and complete business sales — 
-                Katherine Minovski brings over a decade of high-stakes sales expertise to every transaction. 
-                Your success is the only outcome.
-              </p>
-              
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" variant="primary">
-                  Book Free Consultation
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button size="lg" variant="outline">
-                  View Services
-                </Button>
-              </div>
-              
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-brand-200">
-                <div>
-                  <div className="text-3xl font-display font-bold text-brand-800">8+</div>
-                  <div className="text-sm text-brand-600">Years Experience</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-display font-bold text-brand-800">$50M+</div>
-                  <div className="text-sm text-brand-600">Transactions</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-display font-bold text-brand-800">100%</div>
-                  <div className="text-sm text-brand-600">Client Focus</div>
-                </div>
-              </div>
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Refined badge */}
+            <div className="inline-flex items-center gap-2 bg-brand-900/5 border border-brand-200 px-5 py-2.5 rounded-full text-sm mb-8">
+              <Sparkles className="h-4 w-4 text-gold-500" />
+              <span className="text-brand-600 font-medium">AI-Powered Real Estate & Business Advisory</span>
             </div>
             
-            <div className="hidden lg:block">
-              {/* Placeholder for Katherine's photo */}
-              <div className="relative">
-                <div className="w-full aspect-[3/4] bg-brand-700 rounded-2xl overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white/80">
-                      <Users className="h-24 w-24 mx-auto mb-4" />
-                      <p className="text-lg">Katherine Minovski</p>
-                      <p className="text-sm opacity-75">Broker</p>
-                    </div>
-                  </div>
-                </div>
-                {/* Decorative elements */}
-                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gold-500 rounded-2xl -z-10" />
-                <div className="absolute -top-6 -right-6 w-24 h-24 border-4 border-gold-500 rounded-2xl" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-900 mb-4">
-              Comprehensive Real Estate &<br />Business Services
-            </h2>
-            <p className="text-lg text-brand-600">
-              Whether you&apos;re buying, selling, or leasing — residential, commercial, or an entire business — 
-              K8ts Estates provides expert representation at every stage.
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display text-brand-900 leading-[1.1] mb-8">
+              Where Technology<br />
+              <span className="text-gradient">Meets Trust</span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-brand-500 mb-10 leading-relaxed max-w-2xl mx-auto font-light">
+              Experience real estate reimagined. Bespoke strategies, 
+              white-glove service, and cutting-edge AI — tailored to your 
+              unique journey.
             </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Residential */}
-            <div className="group p-8 bg-brand-50 rounded-2xl hover:bg-brand-800 transition-all duration-300">
-              <div className="w-14 h-14 bg-brand-800 group-hover:bg-gold-500 rounded-xl flex items-center justify-center mb-6 transition-colors">
-                <Home className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-xl font-display font-bold text-brand-900 group-hover:text-white mb-3 transition-colors">
-                Residential Real Estate
-              </h3>
-              <p className="text-brand-600 group-hover:text-brand-200 transition-colors mb-4">
-                Expert guidance for buying and selling homes across Southern Ontario. 
-                From first-time buyers to luxury properties.
-              </p>
-              <ul className="space-y-2 text-sm text-brand-600 group-hover:text-brand-200 transition-colors">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Buyer Representation
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Seller Representation
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Residential Leasing
-                </li>
-              </ul>
+            
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+              <Button size="lg" variant="primary" className="group">
+                Begin Your Journey
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button size="lg" variant="outline">
+                Discover Our Approach
+              </Button>
             </div>
             
-            {/* Commercial */}
-            <div className="group p-8 bg-brand-50 rounded-2xl hover:bg-brand-800 transition-all duration-300">
-              <div className="w-14 h-14 bg-brand-800 group-hover:bg-gold-500 rounded-xl flex items-center justify-center mb-6 transition-colors">
-                <Building2 className="h-7 w-7 text-white" />
+            {/* Trust indicators */}
+            <div className="flex flex-wrap justify-center gap-8 text-sm text-brand-400">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-gold-500" />
+                <span>Licensed Broker</span>
               </div>
-              <h3 className="text-xl font-display font-bold text-brand-900 group-hover:text-white mb-3 transition-colors">
-                Commercial Real Estate
-              </h3>
-              <p className="text-brand-600 group-hover:text-brand-200 transition-colors mb-4">
-                Investment properties, retail spaces, office buildings, and industrial facilities. 
-                Strategic acquisitions and dispositions.
-              </p>
-              <ul className="space-y-2 text-sm text-brand-600 group-hover:text-brand-200 transition-colors">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Sales & Acquisitions
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Commercial Leasing
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Investment Analysis
-                </li>
-              </ul>
-            </div>
-            
-            {/* Business Brokerage */}
-            <div className="group p-8 bg-brand-50 rounded-2xl hover:bg-brand-800 transition-all duration-300 md:col-span-2 lg:col-span-1">
-              <div className="w-14 h-14 bg-brand-800 group-hover:bg-gold-500 rounded-xl flex items-center justify-center mb-6 transition-colors">
-                <Briefcase className="h-7 w-7 text-white" />
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-gold-500" />
+                <span>RE/MAX Excellence</span>
               </div>
-              <h3 className="text-xl font-display font-bold text-brand-900 group-hover:text-white mb-3 transition-colors">
-                Business Brokerage
-              </h3>
-              <p className="text-brand-600 group-hover:text-brand-200 transition-colors mb-4">
-                Complete business transaction services — from valuation to closing. 
-                Confidential, professional, results-driven.
-              </p>
-              <ul className="space-y-2 text-sm text-brand-600 group-hover:text-brand-200 transition-colors">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Business Valuations
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Buyer & Seller Representation
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-gold-500" />
-                  Deal Structuring & Negotiation
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-20 bg-brand-800 text-white">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
-                Meet Katherine Minovski
-              </h2>
-              <div className="w-20 h-1 bg-gold-500 mb-8" />
-              
-              <div className="space-y-6 text-brand-100 leading-relaxed">
-                <p>
-                  <strong className="text-white">Katherine Minovski isn&apos;t your typical real estate agent.</strong> 
-                  Before entering real estate in 2016, she spent over a decade as a senior executive 
-                  in digital media and enterprise sales — serving as VP of Sales and VP of Product Development, 
-                  closing seven-figure deals with Fortune 500 clients, and building relationships with 
-                  30+ national agencies representing brands like Ford, Toyota, Honda, Mercedes, GM, and Harley-Davidson.
-                </p>
-                
-                <p>
-                  At VerticalScope, she didn&apos;t just meet targets — she shattered them. While the industry 
-                  averaged 14-17% growth, Katherine delivered <strong className="text-gold-400">20-28% growth 
-                  for three consecutive years</strong>. She achieved 135% of quota by Q2 on eight-figure targets. 
-                  She directly closed seven-figure deals with clients from BRP to Progressive Insurance to Discount Tire.
-                </p>
-                
-                <p>
-                  <strong className="text-gold-400">What sets Katherine apart?</strong> She&apos;s a closer. 
-                  She&apos;s negotiated with C-suite executives, presented to investors, and built campaigns 
-                  from concept to completion for the biggest names in automotive, powersports, and beyond. 
-                  When deals get complex, when stakes are high, when other agents would walk away — 
-                  that&apos;s when Katherine thrives.
-                </p>
-                
-                <p>
-                  Today, that same strategic thinking, relentless execution, and client-first approach 
-                  powers her real estate and business brokerage practice. She became a licensed Broker 
-                  shortly after entering the industry — a testament to her rapid mastery and commitment 
-                  to operating at the highest level. Whether you&apos;re buying your first home, selling 
-                  a commercial property, or orchestrating the sale of an established business — 
-                  you deserve someone who&apos;s done this at the highest levels.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-6 mt-10">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gold-500 rounded-lg flex items-center justify-center shrink-0">
-                    <TrendingUp className="h-6 w-6 text-brand-900" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-white">Seven-Figure Closer</div>
-                    <div className="text-sm text-brand-200">Fortune 500 enterprise sales</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gold-500 rounded-lg flex items-center justify-center shrink-0">
-                    <Award className="h-6 w-6 text-brand-900" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-white">Licensed Broker</div>
-                    <div className="text-sm text-brand-200">RE/MAX Your Community Realty</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="relative">
-              {/* About image placeholder */}
-              <div className="aspect-[4/5] bg-brand-700 rounded-2xl overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-white/60">
-                    <Users className="h-20 w-20 mx-auto mb-4" />
-                    <p>Professional Photo</p>
-                  </div>
-                </div>
-              </div>
-              {/* Quote */}
-              <div className="absolute -bottom-6 -left-6 right-12 bg-white text-brand-900 p-6 rounded-xl shadow-xl">
-                <p className="font-display text-lg italic">
-                  &ldquo;I&apos;ve closed seven-figure deals for Fortune 500 clients. Your biggest 
-                  financial decision deserves that same level of expertise and commitment.&rdquo;
-                </p>
-                <p className="text-gold-600 font-semibold mt-2">— Katherine Minovski</p>
+              <div className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-gold-500" />
+                <span>AI-Enhanced Service</span>
               </div>
             </div>
           </div>
         </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <div className="w-6 h-10 border-2 border-brand-300 rounded-full flex justify-center pt-2">
+            <div className="w-1.5 h-3 bg-brand-400 rounded-full animate-bounce" />
+          </div>
+        </div>
       </section>
 
-      {/* Track Record Section */}
-      <section className="py-20 bg-white">
+      {/* Philosophy Section - What Makes Us Different */}
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-900 mb-4">
-              A Track Record That Speaks
+          <div className="max-w-3xl mx-auto text-center mb-20">
+            <p className="text-gold-600 font-medium tracking-wide uppercase text-sm mb-4">Our Philosophy</p>
+            <h2 className="text-4xl md:text-5xl font-display text-brand-900 mb-6">
+              A New Standard in<br />Real Estate Excellence
             </h2>
-            <p className="text-lg text-brand-600">
-              Before real estate, Katherine built a career closing deals that others said couldn&apos;t be done.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-brand-50 p-6 rounded-2xl text-center">
-              <div className="text-4xl font-display font-bold text-gold-600 mb-2">135%</div>
-              <div className="text-brand-700 font-medium">Of Quota Achieved</div>
-              <div className="text-sm text-brand-500 mt-1">On eight-figure targets</div>
-            </div>
-            <div className="bg-brand-50 p-6 rounded-2xl text-center">
-              <div className="text-4xl font-display font-bold text-gold-600 mb-2">7-Figure</div>
-              <div className="text-brand-700 font-medium">Deals Closed</div>
-              <div className="text-sm text-brand-500 mt-1">Fortune 500 clients</div>
-            </div>
-            <div className="bg-brand-50 p-6 rounded-2xl text-center">
-              <div className="text-4xl font-display font-bold text-gold-600 mb-2">30+</div>
-              <div className="text-brand-700 font-medium">National Agencies</div>
-              <div className="text-sm text-brand-500 mt-1">Major brand relationships</div>
-            </div>
-            <div className="bg-brand-50 p-6 rounded-2xl text-center">
-              <div className="text-4xl font-display font-bold text-gold-600 mb-2">20-28%</div>
-              <div className="text-brand-700 font-medium">YoY Growth</div>
-              <div className="text-sm text-brand-500 mt-1">3 consecutive years</div>
-            </div>
-          </div>
-          
-          <div className="mt-12 bg-brand-800 rounded-2xl p-8 md:p-12">
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h3 className="text-2xl font-display font-bold text-white mb-4">
-                  Former Clients Include
-                </h3>
-                <p className="text-brand-200 mb-6">
-                  A decade of building relationships with the world&apos;s leading brands 
-                  and their agencies — now focused entirely on you.
-                </p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {['Ford', 'Toyota', 'Honda', 'Mercedes', 'GM', 'Subaru', 'Harley-Davidson', 'Progressive', 'Allstate'].map((brand) => (
-                  <div key={brand} className="bg-brand-700/50 rounded-lg py-2 px-3 text-center text-sm text-brand-200">
-                    {brand}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Section */}
-      <section className="py-20 bg-brand-50">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-900 mb-4">
-              Why Choose K8ts Estates
-            </h2>
-            <p className="text-lg text-brand-600">
-              The difference is in the details — and the results.
+            <p className="text-lg text-brand-500 leading-relaxed">
+              We believe every client deserves more than a transaction — they deserve 
+              a trusted advisor who combines deep expertise with the latest technology 
+              to deliver exceptional outcomes.
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                title: "Expert Negotiator",
-                description: "Enterprise sales background means Katherine knows how to structure and close complex deals."
+                icon: Sparkles,
+                title: "AI-Powered Insights",
+                description: "Leverage cutting-edge technology for market analysis, valuation, and strategic decision-making."
               },
               {
-                title: "Full Representation",
-                description: "Buyer, seller, or multiple representation — clear communication and ethical practice always."
+                icon: Heart,
+                title: "White Glove Service",
+                description: "Personalized attention at every step. Your journey is unique — your service should be too."
               },
               {
-                title: "Market Knowledge",
-                description: "Deep expertise across Southern Ontario&apos;s residential, commercial, and business markets."
+                icon: Target,
+                title: "Tailored Strategies",
+                description: "Custom plans designed for your individual goals, timeline, and circumstances."
               },
               {
-                title: "Results Focused",
-                description: "Every strategy, every decision, every action is designed to maximize your outcome."
+                icon: MessageCircle,
+                title: "Exceptional Communication",
+                description: "Proactive updates, clear guidance, and always available when you need us."
               }
             ].map((item, i) => (
-              <div key={i} className="text-center">
-                <div className="w-16 h-16 bg-gold-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-display font-bold text-brand-900">{i + 1}</span>
+              <div key={i} className="group">
+                <div className="bg-brand-50 rounded-2xl p-8 h-full border border-transparent hover:border-gold-400/30 hover:shadow-lg hover:shadow-gold-400/5 transition-all duration-300">
+                  <div className="w-14 h-14 bg-gradient-to-br from-gold-400 to-gold-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <item.icon className="h-7 w-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-display text-brand-900 mb-3">{item.title}</h3>
+                  <p className="text-brand-500 leading-relaxed">{item.description}</p>
                 </div>
-                <h3 className="text-lg font-display font-bold text-brand-900 mb-2">{item.title}</h3>
-                <p className="text-brand-600 text-sm">{item.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-brand-800 to-brand-900 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-brand-200 mb-8 max-w-2xl mx-auto">
-            Whether you&apos;re buying, selling, or exploring your options — 
-            let&apos;s have a conversation about your goals.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" variant="secondary">
-              <Phone className="mr-2 h-5 w-5" />
-              Call Now
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-brand-900">
-              <Mail className="mr-2 h-5 w-5" />
-              Send Email
-            </Button>
+      {/* Services Section - Refined */}
+      <section id="services" className="py-24 bg-brand-950 text-white">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center mb-20">
+            <p className="text-gold-400 font-medium tracking-wide uppercase text-sm mb-4">Services</p>
+            <h2 className="text-4xl md:text-5xl font-display mb-6">
+              Comprehensive Advisory<br />For Every Need
+            </h2>
+            <p className="text-lg text-brand-300 leading-relaxed">
+              From finding your dream home to orchestrating complex business transactions — 
+              we bring the same level of excellence to every engagement.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Residential */}
+            <div className="group relative bg-brand-900/50 rounded-3xl p-10 border border-brand-800 hover:border-gold-500/30 transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-b from-gold-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <Home className="h-10 w-10 text-gold-400 mb-6" />
+                <h3 className="text-2xl font-display mb-4">Residential</h3>
+                <p className="text-brand-300 mb-6 leading-relaxed">
+                  Whether you&apos;re buying your first home or selling a cherished property, 
+                  we guide you with expertise and care.
+                </p>
+                <ul className="space-y-3 text-sm text-brand-400">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Buyer & Seller Representation
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Luxury & Investment Properties
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Residential Leasing
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Commercial */}
+            <div className="group relative bg-brand-900/50 rounded-3xl p-10 border border-brand-800 hover:border-gold-500/30 transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-b from-gold-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <Building2 className="h-10 w-10 text-gold-400 mb-6" />
+                <h3 className="text-2xl font-display mb-4">Commercial</h3>
+                <p className="text-brand-300 mb-6 leading-relaxed">
+                  Strategic acquisitions, dispositions, and leasing for investors 
+                  and business owners seeking exceptional opportunities.
+                </p>
+                <ul className="space-y-3 text-sm text-brand-400">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Investment Properties
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Retail, Office & Industrial
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Commercial Leasing
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Business Brokerage */}
+            <div className="group relative bg-brand-900/50 rounded-3xl p-10 border border-brand-800 hover:border-gold-500/30 transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-b from-gold-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <Briefcase className="h-10 w-10 text-gold-400 mb-6" />
+                <h3 className="text-2xl font-display mb-4">Business Advisory</h3>
+                <p className="text-brand-300 mb-6 leading-relaxed">
+                  From valuation to closing, we orchestrate business transactions 
+                  with the discretion and expertise they require.
+                </p>
+                <ul className="space-y-3 text-sm text-brand-400">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Business Valuations
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Buyer & Seller Representation
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-gold-500 shrink-0" />
+                    Deal Structuring & Negotiation
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section - Prestigious */}
+      <section id="about" className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-gold-600 font-medium tracking-wide uppercase text-sm mb-4">About Katherine</p>
+              <h2 className="text-4xl md:text-5xl font-display text-brand-900 mb-8 leading-tight">
+                A Different Kind<br />of Real Estate Professional
+              </h2>
+              
+              <div className="space-y-6 text-brand-600 leading-relaxed">
+                <p className="text-lg">
+                  <strong className="text-brand-900">Before entering real estate, Katherine Minovski spent over a decade 
+                  at the highest levels of enterprise sales</strong> — serving as VP of Sales and VP of Product 
+                  Development, closing seven-figure deals with Fortune 500 clients, and building relationships 
+                  with 30+ national agencies representing brands like Ford, Toyota, Mercedes, and Harley-Davidson.
+                </p>
+                
+                <p>
+                  She didn&apos;t just meet targets — she consistently exceeded them, delivering 20-28% growth 
+                  in an industry averaging 14-17%. She achieved 135% of quota on eight-figure targets. 
+                  She knows what it takes to close complex, high-stakes deals.
+                </p>
+                
+                <p>
+                  <strong className="text-gold-600">Today, that same strategic thinking, relentless execution, 
+                  and client-first approach powers K8ts Estates.</strong> Combined with AI-powered insights 
+                  and a commitment to white-glove service, Katherine delivers an experience that&apos;s 
+                  truly exceptional — whether you&apos;re buying your first home, selling a commercial 
+                  property, or navigating a complex business transaction.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-6 mt-10">
+                <div className="bg-brand-50 rounded-xl p-6">
+                  <div className="text-3xl font-display text-gold-600 mb-1">135%</div>
+                  <div className="text-sm text-brand-600">Of quota achieved on eight-figure targets</div>
+                </div>
+                <div className="bg-brand-50 rounded-xl p-6">
+                  <div className="text-3xl font-display text-gold-600 mb-1">30+</div>
+                  <div className="text-sm text-brand-600">National agency relationships</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              {/* Photo placeholder with elegant frame */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-400/20 to-brand-200/20 rounded-3xl transform rotate-3" />
+                <div className="relative aspect-[4/5] bg-brand-100 rounded-3xl overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-brand-400">
+                      <Users className="h-20 w-20 mx-auto mb-4 opacity-50" />
+                      <p className="text-sm">Professional Photo</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Floating quote card */}
+              <div className="absolute -bottom-8 -left-8 right-8 bg-brand-900 text-white p-8 rounded-2xl shadow-2xl">
+                <p className="font-display text-xl italic leading-relaxed">
+                  &ldquo;Your biggest financial decisions deserve more than a transaction — 
+                  they deserve a trusted advisor committed to your success.&rdquo;
+                </p>
+                <p className="text-gold-400 font-medium mt-4">— Katherine Minovski</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Experience Section */}
+      <section className="py-24 bg-brand-50">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <p className="text-gold-600 font-medium tracking-wide uppercase text-sm mb-4">The Experience</p>
+            <h2 className="text-4xl md:text-5xl font-display text-brand-900 mb-6">
+              What to Expect When<br />You Work With Us
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              {
+                step: "01",
+                title: "Discovery",
+                description: "We begin by deeply understanding your goals, timeline, and unique circumstances. No two clients are alike — neither is our approach."
+              },
+              {
+                step: "02",
+                title: "Strategy",
+                description: "Using AI-powered market analysis and decades of experience, we craft a tailored plan designed to achieve your specific objectives."
+              },
+              {
+                step: "03",
+                title: "Execution",
+                description: "With clear communication at every step, we guide you through the process — handling complexity so you can focus on what matters."
+              }
+            ].map((item) => (
+              <div key={item.step} className="relative">
+                <div className="text-8xl font-display text-brand-200/50 absolute -top-4 -left-2">{item.step}</div>
+                <div className="relative pt-12">
+                  <h3 className="text-2xl font-display text-brand-900 mb-4">{item.title}</h3>
+                  <p className="text-brand-500 leading-relaxed">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Elegant */}
+      <section className="py-24 bg-brand-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-800 to-brand-950" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/10 rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-display text-white mb-6">
+              Ready to Experience<br />Real Estate Reimagined?
+            </h2>
+            <p className="text-xl text-brand-300 mb-10 leading-relaxed">
+              Let&apos;s have a conversation about your goals. No pressure, no obligation — 
+              just a chance to see if we&apos;re the right fit for your journey.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button size="lg" variant="secondary" className="group">
+                <Phone className="mr-2 h-5 w-5" />
+                Schedule a Call
+              </Button>
+              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                <Mail className="mr-2 h-5 w-5" />
+                Send a Message
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white">
+      <section id="contact" className="py-24 bg-white">
         <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-900 mb-6">
-                Get In Touch
+              <p className="text-gold-600 font-medium tracking-wide uppercase text-sm mb-4">Get in Touch</p>
+              <h2 className="text-4xl md:text-5xl font-display text-brand-900 mb-6">
+                Let&apos;s Start a<br />Conversation
               </h2>
-              <p className="text-lg text-brand-600 mb-8">
-                Serving all of Southern Ontario — from Toronto and the GTA to Hamilton, 
-                Kitchener-Waterloo, and beyond.
+              <p className="text-lg text-brand-500 mb-10 leading-relaxed">
+                Serving Southern Ontario — from Toronto and the GTA to Hamilton, 
+                Kitchener-Waterloo, and beyond. Available for in-person meetings, 
+                video calls, or however you prefer to connect.
               </p>
               
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-brand-100 rounded-lg flex items-center justify-center shrink-0">
-                    <Phone className="h-6 w-6 text-brand-700" />
+                <a href="tel:+14168167850" className="flex items-center gap-4 group">
+                  <div className="w-14 h-14 bg-brand-50 rounded-xl flex items-center justify-center group-hover:bg-gold-500 transition-colors">
+                    <Phone className="h-6 w-6 text-brand-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
-                    <div className="font-semibold text-brand-900">Phone</div>
-                    <a href="tel:+14168167850" className="text-brand-600 hover:text-gold-600 transition">
-                      (416) 816-7850
-                    </a>
+                    <div className="text-sm text-brand-400">Phone</div>
+                    <div className="text-lg text-brand-900 font-medium">(416) 816-7850</div>
                   </div>
-                </div>
+                </a>
                 
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-brand-100 rounded-lg flex items-center justify-center shrink-0">
-                    <Mail className="h-6 w-6 text-brand-700" />
+                <a href="mailto:kminovski@gmail.com" className="flex items-center gap-4 group">
+                  <div className="w-14 h-14 bg-brand-50 rounded-xl flex items-center justify-center group-hover:bg-gold-500 transition-colors">
+                    <Mail className="h-6 w-6 text-brand-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
-                    <div className="font-semibold text-brand-900">Email</div>
-                    <a href="mailto:kminovski@gmail.com" className="text-brand-600 hover:text-gold-600 transition">
-                      kminovski@gmail.com
-                    </a>
+                    <div className="text-sm text-brand-400">Email</div>
+                    <div className="text-lg text-brand-900 font-medium">kminovski@gmail.com</div>
                   </div>
-                </div>
+                </a>
                 
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-brand-100 rounded-lg flex items-center justify-center shrink-0">
-                    <MapPin className="h-6 w-6 text-brand-700" />
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-brand-50 rounded-xl flex items-center justify-center">
+                    <MapPin className="h-6 w-6 text-brand-600" />
                   </div>
                   <div>
-                    <div className="font-semibold text-brand-900">Office</div>
-                    <div className="text-brand-600">
+                    <div className="text-sm text-brand-400">Office</div>
+                    <div className="text-brand-900">
                       RE/MAX Your Community Realty<br />
-                      161 Main Street<br />
-                      Unionville, Ontario L3R 2G8
+                      <span className="text-brand-500">161 Main Street, Unionville, ON</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-brand-50 rounded-2xl p-8">
-              <h3 className="text-xl font-display font-bold text-brand-900 mb-6">
-                Send a Message
-              </h3>
-              <form className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <div className="bg-brand-50 rounded-3xl p-10">
+                <h3 className="text-2xl font-display text-brand-900 mb-2">Send a Message</h3>
+                <p className="text-brand-500 mb-8">I typically respond within a few hours.</p>
+                
+                <form className="space-y-5">
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <input 
+                      type="text" 
+                      placeholder="First Name" 
+                      className="w-full px-5 py-4 bg-white rounded-xl border border-brand-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition text-brand-900 placeholder:text-brand-400"
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Last Name" 
+                      className="w-full px-5 py-4 bg-white rounded-xl border border-brand-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition text-brand-900 placeholder:text-brand-400"
+                    />
+                  </div>
                   <input 
-                    type="text" 
-                    placeholder="First Name" 
-                    className="w-full px-4 py-3 rounded-lg border border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition"
+                    type="email" 
+                    placeholder="Email Address" 
+                    className="w-full px-5 py-4 bg-white rounded-xl border border-brand-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition text-brand-900 placeholder:text-brand-400"
                   />
                   <input 
-                    type="text" 
-                    placeholder="Last Name" 
-                    className="w-full px-4 py-3 rounded-lg border border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition"
+                    type="tel" 
+                    placeholder="Phone Number" 
+                    className="w-full px-5 py-4 bg-white rounded-xl border border-brand-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition text-brand-900 placeholder:text-brand-400"
                   />
-                </div>
-                <input 
-                  type="email" 
-                  placeholder="Email Address" 
-                  className="w-full px-4 py-3 rounded-lg border border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition"
-                />
-                <input 
-                  type="tel" 
-                  placeholder="Phone Number" 
-                  className="w-full px-4 py-3 rounded-lg border border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition"
-                />
-                <select 
-                  className="w-full px-4 py-3 rounded-lg border border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition text-brand-600"
-                >
-                  <option value="">I&apos;m interested in...</option>
-                  <option value="buying-residential">Buying a Home</option>
-                  <option value="selling-residential">Selling a Home</option>
-                  <option value="buying-commercial">Buying Commercial Property</option>
-                  <option value="selling-commercial">Selling Commercial Property</option>
-                  <option value="leasing">Leasing</option>
-                  <option value="buying-business">Buying a Business</option>
-                  <option value="selling-business">Selling a Business</option>
-                  <option value="other">Other</option>
-                </select>
-                <textarea 
-                  placeholder="Tell me about your goals..." 
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-lg border border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition resize-none"
-                />
-                <Button type="submit" variant="primary" className="w-full">
-                  Send Message
-                </Button>
-              </form>
+                  <select 
+                    className="w-full px-5 py-4 bg-white rounded-xl border border-brand-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition text-brand-500"
+                  >
+                    <option value="">I&apos;m interested in...</option>
+                    <option value="buying-residential">Buying a Home</option>
+                    <option value="selling-residential">Selling a Home</option>
+                    <option value="buying-commercial">Commercial Real Estate</option>
+                    <option value="leasing">Leasing</option>
+                    <option value="buying-business">Buying a Business</option>
+                    <option value="selling-business">Selling a Business</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <textarea 
+                    placeholder="Tell me about your goals..." 
+                    rows={4}
+                    className="w-full px-5 py-4 bg-white rounded-xl border border-brand-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition resize-none text-brand-900 placeholder:text-brand-400"
+                  />
+                  <Button type="submit" variant="primary" className="w-full">
+                    Send Message
+                  </Button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-brand-900 text-white py-12">
+      {/* Footer - Clean & Minimal */}
+      <footer className="bg-brand-950 text-white py-16">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-              <span className="text-2xl font-display font-bold">
-                K8ts<span className="text-gold-500">Estates</span>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="text-center md:text-left">
+              <span className="text-3xl font-display">
+                K8ts<span className="text-gold-400">Estates</span>
               </span>
-              <p className="text-brand-300 text-sm mt-2">
-                Katherine Minovski, Broker | RE/MAX Your Community Realty
+              <p className="text-brand-400 text-sm mt-2">
+                Katherine Minovski, Broker<br />
+                RE/MAX Your Community Realty
               </p>
             </div>
-            <div className="text-sm text-brand-400 text-center md:text-right">
-              <p>© {new Date().getFullYear()} K8ts Estates. All rights reserved.</p>
+            
+            <div className="flex flex-col md:flex-row items-center gap-8 text-sm text-brand-400">
+              <a href="#services" className="hover:text-white transition">Services</a>
+              <a href="#about" className="hover:text-white transition">About</a>
+              <a href="#contact" className="hover:text-white transition">Contact</a>
+            </div>
+            
+            <div className="text-sm text-brand-500 text-center md:text-right">
+              <p>© {new Date().getFullYear()} K8ts Estates</p>
               <p className="mt-1">Serving Southern Ontario</p>
             </div>
           </div>
