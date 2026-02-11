@@ -209,30 +209,34 @@ export default function HomePage() {
               <div className="space-y-6 text-brand-100 leading-relaxed">
                 <p>
                   <strong className="text-white">Katherine Minovski isn&apos;t your typical real estate agent.</strong> 
-                  Before entering real estate in 2016, she built a formidable career in enterprise sales — 
-                  negotiating multi-million dollar deals, building relationships with C-suite executives, 
-                  and consistently exceeding targets that others deemed impossible.
+                  Before entering real estate in 2016, she spent over a decade as a senior executive 
+                  in digital media and enterprise sales — serving as VP of Sales and VP of Product Development, 
+                  closing seven-figure deals with Fortune 500 clients, and building relationships with 
+                  30+ national agencies representing brands like Ford, Toyota, Honda, Mercedes, GM, and Harley-Davidson.
                 </p>
                 
                 <p>
-                  That same drive, strategic thinking, and relentless client focus now powers her 
-                  real estate and business brokerage practice. Katherine became a licensed Broker 
-                  shortly after entering the industry — a testament to her rapid mastery of the field 
-                  and commitment to operating at the highest level.
+                  At VerticalScope, she didn&apos;t just meet targets — she shattered them. While the industry 
+                  averaged 14-17% growth, Katherine delivered <strong className="text-gold-400">20-28% growth 
+                  for three consecutive years</strong>. She achieved 135% of quota by Q2 on eight-figure targets. 
+                  She directly closed seven-figure deals with clients from BRP to Progressive Insurance to Discount Tire.
                 </p>
                 
                 <p>
                   <strong className="text-gold-400">What sets Katherine apart?</strong> She&apos;s a closer. 
-                  When negotiations get tough, when deals seem stuck, when other agents would walk away — 
-                  that&apos;s when Katherine thrives. Her enterprise sales background means she understands 
-                  complex transactions, multiple stakeholders, and the art of getting to yes.
+                  She&apos;s negotiated with C-suite executives, presented to investors, and built campaigns 
+                  from concept to completion for the biggest names in automotive, powersports, and beyond. 
+                  When deals get complex, when stakes are high, when other agents would walk away — 
+                  that&apos;s when Katherine thrives.
                 </p>
                 
                 <p>
-                  Today, she brings this expertise to every client — whether helping a first-time buyer 
-                  find their dream home, marketing a commercial property, or orchestrating the sale of 
-                  an established business. The result is always the same: exceptional outcomes, 
-                  clear communication, and a client who feels genuinely cared for.
+                  Today, that same strategic thinking, relentless execution, and client-first approach 
+                  powers her real estate and business brokerage practice. She became a licensed Broker 
+                  shortly after entering the industry — a testament to her rapid mastery and commitment 
+                  to operating at the highest level. Whether you&apos;re buying your first home, selling 
+                  a commercial property, or orchestrating the sale of an established business — 
+                  you deserve someone who&apos;s done this at the highest levels.
                 </p>
               </div>
               
@@ -242,8 +246,8 @@ export default function HomePage() {
                     <TrendingUp className="h-6 w-6 text-brand-900" />
                   </div>
                   <div>
-                    <div className="font-semibold text-white">Enterprise Sales Background</div>
-                    <div className="text-sm text-brand-200">Multi-million dollar deals</div>
+                    <div className="font-semibold text-white">Seven-Figure Closer</div>
+                    <div className="text-sm text-brand-200">Fortune 500 enterprise sales</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -271,10 +275,68 @@ export default function HomePage() {
               {/* Quote */}
               <div className="absolute -bottom-6 -left-6 right-12 bg-white text-brand-900 p-6 rounded-xl shadow-xl">
                 <p className="font-display text-lg italic">
-                  &ldquo;Every transaction is personal. Your biggest financial decision deserves 
-                  someone who treats it that way.&rdquo;
+                  &ldquo;I&apos;ve closed seven-figure deals for Fortune 500 clients. Your biggest 
+                  financial decision deserves that same level of expertise and commitment.&rdquo;
                 </p>
                 <p className="text-gold-600 font-semibold mt-2">— Katherine Minovski</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Track Record Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-brand-900 mb-4">
+              A Track Record That Speaks
+            </h2>
+            <p className="text-lg text-brand-600">
+              Before real estate, Katherine built a career closing deals that others said couldn&apos;t be done.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-brand-50 p-6 rounded-2xl text-center">
+              <div className="text-4xl font-display font-bold text-gold-600 mb-2">135%</div>
+              <div className="text-brand-700 font-medium">Of Quota Achieved</div>
+              <div className="text-sm text-brand-500 mt-1">On eight-figure targets</div>
+            </div>
+            <div className="bg-brand-50 p-6 rounded-2xl text-center">
+              <div className="text-4xl font-display font-bold text-gold-600 mb-2">7-Figure</div>
+              <div className="text-brand-700 font-medium">Deals Closed</div>
+              <div className="text-sm text-brand-500 mt-1">Fortune 500 clients</div>
+            </div>
+            <div className="bg-brand-50 p-6 rounded-2xl text-center">
+              <div className="text-4xl font-display font-bold text-gold-600 mb-2">30+</div>
+              <div className="text-brand-700 font-medium">National Agencies</div>
+              <div className="text-sm text-brand-500 mt-1">Major brand relationships</div>
+            </div>
+            <div className="bg-brand-50 p-6 rounded-2xl text-center">
+              <div className="text-4xl font-display font-bold text-gold-600 mb-2">20-28%</div>
+              <div className="text-brand-700 font-medium">YoY Growth</div>
+              <div className="text-sm text-brand-500 mt-1">3 consecutive years</div>
+            </div>
+          </div>
+          
+          <div className="mt-12 bg-brand-800 rounded-2xl p-8 md:p-12">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-display font-bold text-white mb-4">
+                  Former Clients Include
+                </h3>
+                <p className="text-brand-200 mb-6">
+                  A decade of building relationships with the world&apos;s leading brands 
+                  and their agencies — now focused entirely on you.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {['Ford', 'Toyota', 'Honda', 'Mercedes', 'GM', 'Subaru', 'Harley-Davidson', 'Progressive', 'Allstate'].map((brand) => (
+                  <div key={brand} className="bg-brand-700/50 rounded-lg py-2 px-3 text-center text-sm text-brand-200">
+                    {brand}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -367,8 +429,8 @@ export default function HomePage() {
                   </div>
                   <div>
                     <div className="font-semibold text-brand-900">Phone</div>
-                    <a href="tel:+14165551234" className="text-brand-600 hover:text-gold-600 transition">
-                      (416) 555-1234
+                    <a href="tel:+14168167850" className="text-brand-600 hover:text-gold-600 transition">
+                      (416) 816-7850
                     </a>
                   </div>
                 </div>
@@ -379,8 +441,8 @@ export default function HomePage() {
                   </div>
                   <div>
                     <div className="font-semibold text-brand-900">Email</div>
-                    <a href="mailto:kate@k8tsestates.com" className="text-brand-600 hover:text-gold-600 transition">
-                      kate@k8tsestates.com
+                    <a href="mailto:kminovski@gmail.com" className="text-brand-600 hover:text-gold-600 transition">
+                      kminovski@gmail.com
                     </a>
                   </div>
                 </div>

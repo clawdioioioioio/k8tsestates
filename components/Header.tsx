@@ -22,13 +22,13 @@ export function Header() {
       <div className="hidden md:block bg-brand-800 text-white text-sm py-2">
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-6">
-            <a href="tel:+14165551234" className="flex items-center gap-2 hover:text-gold-400 transition">
+            <a href="tel:+14168167850" className="flex items-center gap-2 hover:text-gold-400 transition">
               <Phone className="h-4 w-4" />
-              <span>(416) 555-1234</span>
+              <span>(416) 816-7850</span>
             </a>
-            <a href="mailto:kate@k8tsestates.com" className="flex items-center gap-2 hover:text-gold-400 transition">
+            <a href="mailto:kminovski@gmail.com" className="flex items-center gap-2 hover:text-gold-400 transition">
               <Mail className="h-4 w-4" />
-              <span>kate@k8tsestates.com</span>
+              <span>kminovski@gmail.com</span>
             </a>
           </div>
           <div className="text-brand-200">
