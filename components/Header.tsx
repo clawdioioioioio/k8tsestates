@@ -18,7 +18,7 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -27,9 +27,9 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-sm"
+          ? "glass-surface shadow-sm border-b border-brand-100"
           : "bg-transparent"
       )}
     >
@@ -37,8 +37,8 @@ export function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl md:text-3xl font-display font-medium text-brand-900">
-              K8ts<span className="text-gold-500">Estates</span>
+            <span className="text-2xl font-display font-medium text-brand-900">
+              K8ts<span className="text-accent-500">Estates</span>
             </span>
           </Link>
 
@@ -55,9 +55,9 @@ export function Header() {
             ))}
             <a
               href="tel:+14168167850"
-              className="flex items-center gap-2 text-brand-900 font-medium"
+              className="flex items-center gap-2 text-brand-800 font-medium text-sm"
             >
-              <Phone className="h-4 w-4 text-gold-500" />
+              <Phone className="h-4 w-4 text-accent-500" />
               (416) 816-7850
             </a>
             <Button variant="primary" size="sm">
@@ -86,7 +86,7 @@ export function Header() {
             mobileMenuOpen ? "max-h-96 mt-4" : "max-h-0"
           )}
         >
-          <div className="flex flex-col gap-4 py-6 border-t border-brand-100">
+          <div className="flex flex-col gap-4 py-6 border-t border-brand-200">
             {navigation.map((item) => (
               <a
                 key={item.name}
@@ -99,9 +99,9 @@ export function Header() {
             ))}
             <a
               href="tel:+14168167850"
-              className="flex items-center gap-2 text-brand-900 font-medium py-2"
+              className="flex items-center gap-2 text-brand-800 font-medium py-2"
             >
-              <Phone className="h-5 w-5 text-gold-500" />
+              <Phone className="h-5 w-5 text-accent-500" />
               (416) 816-7850
             </a>
             <Button variant="primary" className="w-full mt-2">
