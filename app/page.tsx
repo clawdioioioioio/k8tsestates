@@ -232,22 +232,6 @@ export default function HomePage() {
                   eight-figure targets.
                 </p>
               </div>
-              
-              {/* Stats row */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-brand-100">
-                <div>
-                  <div className="text-2xl lg:text-3xl font-semibold text-brand-900">135%</div>
-                  <div className="text-sm text-brand-500 mt-1">Quota Achievement</div>
-                </div>
-                <div>
-                  <div className="text-2xl lg:text-3xl font-semibold text-brand-900">30+</div>
-                  <div className="text-sm text-brand-500 mt-1">F500 Partners</div>
-                </div>
-                <div>
-                  <div className="text-2xl lg:text-3xl font-semibold text-brand-900">7-Fig</div>
-                  <div className="text-sm text-brand-500 mt-1">Deals Closed</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
