@@ -83,7 +83,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust Bar - Simple */}
+      {/* Trust Bar - Simple - Force redeploy v2 */}
       <section className="py-8 bg-white border-b border-brand-100">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-16 text-brand-500 text-sm">
