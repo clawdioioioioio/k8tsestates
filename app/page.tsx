@@ -101,7 +101,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-accent-500" />
-              <span>135% Quota Achievement</span>
+              <span>Trusted Advisor</span>
             </div>
           </div>
         </div>
@@ -232,8 +232,7 @@ export default function HomePage() {
                 <p>
                   Consistently closed 7-figure deals with Fortune 500 clients across 30+ partnerships. 
                   Track record: <span className="text-accent-600 font-medium">20-28% growth</span> in 
-                  an industry averaging 14-17%. <span className="text-accent-600 font-medium">135% of quota</span> on 
-                  eight-figure targets.
+                  an industry averaging 14-17%.
                 </p>
               </div>
             </div>
