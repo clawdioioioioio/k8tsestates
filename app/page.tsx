@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { ContactForm } from "@/components/ContactForm";
 import Image from "next/image";
 import { 
   Building2, Home, Briefcase, Phone, Mail, MapPin, ArrowRight, 
@@ -405,54 +406,7 @@ export default function HomePage() {
               <h3 className="text-xl font-bold text-brand-900 mb-1">Send a message</h3>
               <p className="text-brand-500 mb-8 text-sm">I typically respond within a few hours.</p>
               
-              <form className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <input 
-                    type="text" 
-                    placeholder="First Name" 
-                    className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition text-brand-900 placeholder:text-brand-400 text-sm"
-                  />
-                  <input 
-                    type="text" 
-                    placeholder="Last Name" 
-                    className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition text-brand-900 placeholder:text-brand-400 text-sm"
-                  />
-                </div>
-                <input 
-                  type="email" 
-                  placeholder="Email Address" 
-                  className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition text-brand-900 placeholder:text-brand-400 text-sm"
-                />
-                <input 
-                  type="tel" 
-                  placeholder="Phone Number" 
-                  className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition text-brand-900 placeholder:text-brand-400 text-sm"
-                />
-                <select 
-                  className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition text-brand-500 text-sm"
-                  defaultValue=""
-                >
-                  <option value="" disabled>I&apos;m interested in...</option>
-                  <option value="buy-home">Buying a Home</option>
-                  <option value="sell-home">Selling a Home</option>
-                  <option value="invest">Investment Property</option>
-                  <option value="commercial">Commercial Real Estate</option>
-                  <option value="buy-business">Buying a Business</option>
-                  <option value="sell-business">Selling a Business</option>
-                </select>
-                <textarea 
-                  placeholder="Tell me about your goals..." 
-                  rows={4}
-                  className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition resize-none text-brand-900 placeholder:text-brand-400 text-sm"
-                />
-                <button 
-                  type="submit" 
-                  className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 bg-brand-900 text-white font-semibold rounded-xl hover:bg-brand-800 transition-colors text-base"
-                >
-                  Send Message
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </form>
+              <ContactForm />
             </div>
           </div>
         </div>
