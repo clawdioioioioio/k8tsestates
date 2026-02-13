@@ -14,12 +14,12 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "K8ts Estates | Katherine Minovski | Modern Real Estate & Business Advisory",
-  description: "Where technology meets trust. AI-powered real estate and business advisory for discerning clients in Southern Ontario.",
-  keywords: "real estate, business broker, Southern Ontario, AI-powered, Vaughan, Toronto, RE/MAX",
+  title: "K8ts Estates | Katherine Minovski | Real Estate & Business Brokerage",
+  description: "Corporate-level strategy meets personal attention. Residential, commercial, and business brokerage for clients who expect more. Licensed RE/MAX Broker.",
+  keywords: "real estate, business broker, Southern Ontario, Vaughan, Toronto, RE/MAX, commercial, residential",
   openGraph: {
-    title: "K8ts Estates | Technology Meets Trust",
-    description: "AI-powered real estate and business advisory. Experience the future.",
+    title: "K8ts Estates | Real Estate, Reimagined",
+    description: "Corporate-level strategy meets personal attention. Residential, commercial, and business brokerage.",
     type: "website",
   },
 };
@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
-      <body className="bg-brand-50 text-brand-900 antialiased font-sans">
+      <body className="bg-base text-brand-900 antialiased font-sans">
         {children}
       </body>
     </html>
