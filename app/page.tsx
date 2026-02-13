@@ -230,7 +230,7 @@ export default function HomePage() {
                   the same strategic discipline to residential, commercial, and business sales.
                 </p>
                 <p>
-                  Closed seven-figure deals with Fortune 500 clients across 30+ partnerships. 
+                  Consistently closed 7-figure deals with Fortune 500 clients across 30+ partnerships. 
                   Track record: <span className="text-accent-600 font-medium">20-28% growth</span> in 
                   an industry averaging 14-17%. <span className="text-accent-600 font-medium">135% of quota</span> on 
                   eight-figure targets.
