@@ -33,18 +33,18 @@ export default function HomePage() {
                 Real Estate • Business Sales • Commercial
               </p>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-white mb-6 animate-fade-in delay-100" style={{ opacity: 0 }}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-white mb-6 animate-slide-up">
                 Experience that delivers{" "}
                 <span className="text-accent-400">results.</span>
               </h1>
               
-              <p className="text-lg text-brand-300 mb-8 leading-relaxed animate-fade-in delay-200" style={{ opacity: 0 }}>
+              <p className="text-lg text-brand-300 mb-8 leading-relaxed animate-slide-up animation-delay-100">
                 Combining institutional expertise with personalized service for 
                 discerning clients across Southern Ontario. Residential, commercial, 
                 and business sales.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in delay-300" style={{ opacity: 0 }}>
+              <div className="flex flex-col sm:flex-row gap-4 animate-slide-up animation-delay-200">
                 <a 
                   href="#contact"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-brand-900 font-medium rounded-lg hover:bg-brand-100 transition-colors"
