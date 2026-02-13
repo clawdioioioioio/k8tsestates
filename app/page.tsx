@@ -60,22 +60,6 @@ export default function HomePage() {
                   (416) 816-7850
                 </a>
               </div>
-              
-              {/* Quick stats */}
-              <div className="flex flex-wrap gap-8 sm:gap-12">
-                <div>
-                  <div className="text-3xl font-bold text-brand-900">20-28%</div>
-                  <div className="text-sm text-brand-400 mt-1">Revenue Growth</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-brand-900">30+</div>
-                  <div className="text-sm text-brand-400 mt-1">Strategic Partnerships</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-brand-900">7-Figure</div>
-                  <div className="text-sm text-brand-400 mt-1">Deal Track Record</div>
-                </div>
-              </div>
             </div>
             
             {/* Photo - 5 cols */}
@@ -245,19 +229,18 @@ export default function HomePage() {
                 <span className="text-accent-600 text-sm font-semibold">About Katherine</span>
               </div>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-900 mb-6">
-                Built for complexity.<br/>
-                <span className="text-brand-400">Driven by results.</span>
+                Complexity,<br/>
+                <span className="text-brand-400">driven by results.</span>
               </h2>
               
               <div className="space-y-5 text-brand-600 leading-relaxed text-base">
                 <p>
                   Before real estate, Katherine spent years in the corporate trenches — closing 
-                  7-figure deals, building Fortune 500 partnerships, and driving growth that 
-                  consistently outpaced the industry.
+                  7-figure deals and exceeding 8-figure targets at Fortune 500 companies.
                 </p>
                 <p>
                   As <strong className="text-brand-900">VP of Sales & Product Development at Vertical Scope</strong>, 
-                  she negotiated the sale of an equity position to Torstar Corporation.
+                  she managed teams internationally and negotiated the sale of an equity position to Torstar Corporation.
                 </p>
                 <p>
                   As <strong className="text-brand-900">COO & VP Business Development at Bassett Media Group</strong>, 
@@ -271,16 +254,7 @@ export default function HomePage() {
                 </p>
               </div>
               
-              <div className="mt-8 pt-8 border-t border-brand-100 grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-2xl font-bold text-brand-900">30+</div>
-                  <div className="text-sm text-brand-400">Fortune 500 Partnerships</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-brand-900">20-28%</div>
-                  <div className="text-sm text-brand-400">Growth vs 14-17% Industry Avg</div>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
