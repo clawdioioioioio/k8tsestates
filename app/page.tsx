@@ -101,7 +101,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-accent-500" />
-              <span>Trusted Advisor</span>
+              <span>Trusted Advisor</span>{/* v2 */}
             </div>
           </div>
         </div>
