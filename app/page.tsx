@@ -390,8 +390,12 @@ export default function HomePage() {
               <div className="space-y-6 text-lg text-brand-600 leading-relaxed mb-10">
                 <p>
                   Before real estate, Katherine spent over a decade at the highest levels 
-                  of enterprise sales — serving as <strong className="text-brand-900">VP of Sales and VP of Product Development</strong>, 
-                  closing seven-figure deals with Fortune 500 clients.
+                  of enterprise leadership — serving as <strong className="text-brand-900">Chief Operating Officer and VP of Business Development at Bassett Media Group</strong>, 
+                  where she drove sales growth for their media network and played a pivotal role in bringing the company public.
+                </p>
+                <p>
+                  She also held senior roles as <strong className="text-brand-900">VP of Sales and VP of Product Development</strong>, 
+                  closing seven-figure deals with Fortune 500 clients across 30+ partnerships.
                 </p>
                 <p>
                   She didn&apos;t just meet targets — she consistently exceeded them. 
