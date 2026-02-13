@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ 
@@ -7,19 +7,19 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const cormorant = Cormorant_Garamond({ 
+const plusJakarta = Plus_Jakarta_Sans({ 
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-cormorant",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
 });
 
 export const metadata: Metadata = {
-  title: "K8ts Estates | Katherine Minovski | Luxury Real Estate & Business Advisory",
-  description: "Bespoke real estate and business advisory services powered by cutting-edge technology and white-glove service. Experience the future of real estate with Katherine Minovski.",
-  keywords: "luxury real estate, business broker, Southern Ontario, AI-powered, white glove service, Vaughan, Toronto, RE/MAX",
+  title: "K8ts Estates | Katherine Minovski | Modern Real Estate & Business Advisory",
+  description: "Where technology meets trust. AI-powered real estate and business advisory for discerning clients in Southern Ontario.",
+  keywords: "real estate, business broker, Southern Ontario, AI-powered, Vaughan, Toronto, RE/MAX",
   openGraph: {
-    title: "K8ts Estates | Where Technology Meets Trust",
-    description: "Bespoke real estate and business advisory services. Experience the future of real estate.",
+    title: "K8ts Estates | Technology Meets Trust",
+    description: "AI-powered real estate and business advisory. Experience the future.",
     type: "website",
   },
 };
@@ -30,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="bg-brand-50 text-brand-900 antialiased">
+    <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
+      <body className="bg-brand-50 text-brand-900 antialiased font-sans">
         {children}
       </body>
     </html>
