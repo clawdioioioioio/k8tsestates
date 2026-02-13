@@ -226,6 +226,10 @@ export default function HomePage() {
                   sales growth for their media network. Played a pivotal role in bringing the company public.
                 </p>
                 <p>
+                  <strong className="text-brand-900">Licensed real estate broker since 2016, RE/MAX.</strong> Applying 
+                  the same strategic discipline to residential, commercial, and business sales.
+                </p>
+                <p>
                   Closed seven-figure deals with Fortune 500 clients across 30+ partnerships. 
                   Track record: <span className="text-accent-600 font-medium">20-28% growth</span> in 
                   an industry averaging 14-17%. <span className="text-accent-600 font-medium">135% of quota</span> on 
