@@ -15,10 +15,7 @@ type OpenHouse = {
   property_address: string;
   city: string | null;
   date: string;
-  start_time: string | null;
-  end_time: string | null;
   mls_number: string | null;
-  listing_price: number | null;
   description: string | null;
   slug: string;
   status: string;
@@ -52,10 +49,7 @@ export default function OpenHousesPage() {
     property_address: '',
     city: '',
     date: '',
-    start_time: '',
-    end_time: '',
     mls_number: '',
-    listing_price: '',
     description: '',
   });
 
@@ -100,16 +94,13 @@ export default function OpenHousesPage() {
       property_address: form.property_address,
       city: form.city || null,
       date: form.date,
-      start_time: form.start_time || null,
-      end_time: form.end_time || null,
       mls_number: form.mls_number || null,
-      listing_price: form.listing_price ? parseFloat(form.listing_price) : null,
       description: form.description || null,
       slug,
       created_by: user?.id || null,
     });
 
-    setForm({ property_address: '', city: '', date: '', start_time: '', end_time: '', mls_number: '', listing_price: '', description: '' });
+    setForm({ property_address: '', city: '', date: '', mls_number: '', description: '' });
     setShowForm(false);
     setSaving(false);
     fetchAll();
@@ -183,7 +174,7 @@ export default function OpenHousesPage() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-brand-500 mb-1">Date *</label>
                 <input
@@ -195,40 +186,11 @@ export default function OpenHousesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-brand-500 mb-1">Start Time</label>
-                <input
-                  type="time"
-                  value={form.start_time}
-                  onChange={(e) => setForm({ ...form, start_time: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-brand-500 mb-1">End Time</label>
-                <input
-                  type="time"
-                  value={form.end_time}
-                  onChange={(e) => setForm({ ...form, end_time: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
                 <label className="block text-xs font-medium text-brand-500 mb-1">MLS #</label>
                 <input
                   type="text"
                   value={form.mls_number}
                   onChange={(e) => setForm({ ...form, mls_number: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-brand-500 mb-1">Listing Price</label>
-                <input
-                  type="number"
-                  value={form.listing_price}
-                  onChange={(e) => setForm({ ...form, listing_price: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400"
                 />
               </div>
@@ -289,9 +251,6 @@ export default function OpenHousesPage() {
                       <Users className="h-3 w-3" />
                       {oh.visitor_count} visitor{oh.visitor_count !== 1 ? 's' : ''}
                     </span>
-                    {oh.listing_price && (
-                      <span>${oh.listing_price.toLocaleString()}</span>
-                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">

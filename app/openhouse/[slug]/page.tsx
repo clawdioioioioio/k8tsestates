@@ -10,8 +10,6 @@ type OpenHouse = {
   property_address: string;
   city: string | null;
   date: string;
-  start_time: string | null;
-  end_time: string | null;
   status: string;
   slug: string;
 };
@@ -50,7 +48,7 @@ export default function OpenHouseSignIn() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('open_houses')
-        .select('id, property_address, city, date, start_time, end_time, status, slug')
+        .select('id, property_address, city, date, status, slug')
         .eq('slug', slug)
         .single();
       if (error || !data) {

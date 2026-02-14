@@ -6,8 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import QRCode from 'qrcode';
 import {
-  ArrowLeft, MapPin, Calendar, Clock, Users, DollarSign, Copy,
-  Check, ExternalLink, X, Loader2
+  ArrowLeft, MapPin, Calendar, Users, Copy,
+  Check, ExternalLink, X
 } from 'lucide-react';
 
 type OpenHouseDetail = {
@@ -15,10 +15,7 @@ type OpenHouseDetail = {
   property_address: string;
   city: string | null;
   date: string;
-  start_time: string | null;
-  end_time: string | null;
   mls_number: string | null;
-  listing_price: number | null;
   description: string | null;
   slug: string;
   status: string;
@@ -122,12 +119,6 @@ export default function OpenHouseDetailPage() {
             <div className="flex flex-wrap items-center gap-4 text-sm text-brand-500">
               {oh.city && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {oh.city}</span>}
               <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {dateStr}</span>
-              {(oh.start_time || oh.end_time) && (
-                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {oh.start_time || '?'} – {oh.end_time || '?'}</span>
-              )}
-              {oh.listing_price && (
-                <span className="flex items-center gap-1"><DollarSign className="h-3.5 w-3.5" /> ${oh.listing_price.toLocaleString()}</span>
-              )}
               {oh.mls_number && <span>MLS# {oh.mls_number}</span>}
             </div>
             {oh.description && <p className="text-sm text-brand-600 mt-3">{oh.description}</p>}
