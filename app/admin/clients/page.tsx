@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Search, ArrowUpDown } from 'lucide-react';
+import { Search, ArrowUpDown, Filter } from 'lucide-react';
 
 const STATUSES = [
   { key: 'all', label: 'All' },
@@ -13,6 +13,8 @@ const STATUSES = [
   { key: 'closed_won', label: 'Won', color: 'bg-green-100 text-green-700' },
   { key: 'closed_lost', label: 'Lost', color: 'bg-gray-100 text-gray-600' },
 ];
+
+type Tag = { id: string; name: string; color: string };
 
 type ClientRow = {
   id: string;
@@ -24,36 +26,68 @@ type ClientRow = {
   inquiry_count: number;
   latest_status: string;
   latest_interest: string;
+  last_contact: string | null;
+  tags: Tag[];
 };
 
-type SortField = 'name' | 'created_at' | 'inquiry_count';
+type SortField = 'name' | 'created_at' | 'inquiry_count' | 'last_contact';
+
+function getContactIndicator(lastContact: string | null): { color: string; label: string } {
+  if (!lastContact) return { color: 'bg-gray-300', label: 'Never contacted' };
+  const days = Math.floor((Date.now() - new Date(lastContact).getTime()) / (1000 * 60 * 60 * 24));
+  if (days <= 30) return { color: 'bg-emerald-400', label: `${days}d ago` };
+  if (days <= 60) return { color: 'bg-amber-400', label: `${days}d ago` };
+  return { color: 'bg-rose-400', label: `${days}d ago` };
+}
 
 export default function ClientsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [clients, setClients] = useState<ClientRow[]>([]);
+  const [allTags, setAllTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [showTagFilter, setShowTagFilter] = useState(false);
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortAsc, setSortAsc] = useState(false);
 
   const fetchClients = useCallback(async () => {
     const supabase = createClient();
 
-    // Fetch clients with their inquiries
-    const { data: clientsData } = await supabase
-      .from('clients')
-      .select('*, inquiries(id, status, interest_type, created_at)')
-      .order('created_at', { ascending: false });
+    const [clientsRes, tagsRes, clientTagsRes, interactionsRes] = await Promise.all([
+      supabase.from('clients').select('*, inquiries(id, status, interest_type, created_at)').order('created_at', { ascending: false }),
+      supabase.from('tags').select('*').order('name'),
+      supabase.from('client_tags').select('client_id, tag_id'),
+      supabase.from('interactions').select('client_id, interaction_date').order('interaction_date', { ascending: false }),
+    ]);
 
-    if (!clientsData) { setClients([]); setLoading(false); return; }
+    const tags = tagsRes.data || [];
+    setAllTags(tags);
 
-    const rows: ClientRow[] = clientsData.map((c: any) => {
+    const tagMap = new Map<string, string[]>();
+    (clientTagsRes.data || []).forEach((ct: any) => {
+      if (!tagMap.has(ct.client_id)) tagMap.set(ct.client_id, []);
+      tagMap.get(ct.client_id)!.push(ct.tag_id);
+    });
+
+    // Get latest interaction per client
+    const lastContactMap = new Map<string, string>();
+    (interactionsRes.data || []).forEach((i: any) => {
+      if (!lastContactMap.has(i.client_id)) {
+        lastContactMap.set(i.client_id, i.interaction_date);
+      }
+    });
+
+    if (!clientsRes.data) { setClients([]); setLoading(false); return; }
+
+    const rows: ClientRow[] = clientsRes.data.map((c: any) => {
       const inqs = c.inquiries || [];
       const sorted = [...inqs].sort((a: any, b: any) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
+      const clientTags = (tagMap.get(c.id) || []).map((tid) => tags.find((t) => t.id === tid)).filter(Boolean) as Tag[];
       return {
         id: c.id,
         first_name: c.first_name,
@@ -64,10 +98,11 @@ export default function ClientsPage() {
         inquiry_count: inqs.length,
         latest_status: sorted[0]?.status || '',
         latest_interest: sorted[0]?.interest_type || '',
+        last_contact: lastContactMap.get(c.id) || null,
+        tags: clientTags,
       };
     });
 
-    // Filter by status if needed
     if (statusFilter !== 'all') {
       setClients(rows.filter((c) => c.latest_status === statusFilter));
     } else {
@@ -80,6 +115,7 @@ export default function ClientsPage() {
 
   const filtered = clients
     .filter((c) => {
+      if (tagFilter && !c.tags.some((t) => t.id === tagFilter)) return false;
       if (!search) return true;
       const s = search.toLowerCase();
       return (
@@ -101,13 +137,18 @@ export default function ClientsPage() {
         case 'inquiry_count':
           cmp = a.inquiry_count - b.inquiry_count;
           break;
+        case 'last_contact':
+          const aTime = a.last_contact ? new Date(a.last_contact).getTime() : 0;
+          const bTime = b.last_contact ? new Date(b.last_contact).getTime() : 0;
+          cmp = aTime - bTime;
+          break;
       }
       return sortAsc ? cmp : -cmp;
     });
 
   function toggleSort(field: SortField) {
     if (sortField === field) setSortAsc(!sortAsc);
-    else { setSortField(field); setSortAsc(true); }
+    else { setSortField(field); setSortAsc(field === 'name'); }
   }
 
   const statusColor = (status: string) =>
@@ -120,7 +161,7 @@ export default function ClientsPage() {
       <h1 className="text-2xl font-bold text-brand-900 mb-6">Clients</h1>
 
       {/* Status filter pills */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
         {STATUSES.map((s) => (
           <button
             key={s.key}
@@ -134,6 +175,43 @@ export default function ClientsPage() {
             {s.label}
           </button>
         ))}
+      </div>
+
+      {/* Tag filter */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button
+          onClick={() => setShowTagFilter(!showTagFilter)}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            tagFilter ? 'bg-accent-100 text-accent-700 border border-accent-200' : 'bg-white text-brand-500 border border-brand-200 hover:bg-brand-50'
+          }`}
+        >
+          <Filter className="h-3 w-3" />
+          {tagFilter ? allTags.find((t) => t.id === tagFilter)?.name : 'Filter by tag'}
+        </button>
+        {showTagFilter && (
+          <div className="flex flex-wrap gap-1.5">
+            {tagFilter && (
+              <button
+                onClick={() => { setTagFilter(null); setShowTagFilter(false); }}
+                className="px-2.5 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-600 hover:bg-brand-200"
+              >
+                Clear
+              </button>
+            )}
+            {allTags.map((tag) => (
+              <button
+                key={tag.id}
+                onClick={() => { setTagFilter(tag.id === tagFilter ? null : tag.id); setShowTagFilter(false); }}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium text-white transition-opacity ${
+                  tagFilter === tag.id ? 'opacity-100 ring-2 ring-offset-1 ring-brand-400' : 'opacity-80 hover:opacity-100'
+                }`}
+                style={{ backgroundColor: tag.color }}
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Search */}
@@ -164,13 +242,18 @@ export default function ClientsPage() {
                       Name <ArrowUpDown className="h-3 w-3" />
                     </button>
                   </th>
+                  <th className="text-left px-4 py-3 font-medium text-brand-600 hidden lg:table-cell">Tags</th>
                   <th className="text-left px-4 py-3 font-medium text-brand-600 hidden md:table-cell">Email</th>
+                  <th className="text-left px-4 py-3 font-medium text-brand-600">
+                    <button onClick={() => toggleSort('last_contact')} className="flex items-center gap-1 hover:text-brand-900">
+                      Last Contact <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
                   <th className="text-left px-4 py-3 font-medium text-brand-600">
                     <button onClick={() => toggleSort('inquiry_count')} className="flex items-center gap-1 hover:text-brand-900">
                       Inquiries <ArrowUpDown className="h-3 w-3" />
                     </button>
                   </th>
-                  <th className="text-left px-4 py-3 font-medium text-brand-600 hidden lg:table-cell">Latest Interest</th>
                   <th className="text-left px-4 py-3 font-medium text-brand-600">Latest Status</th>
                   <th className="text-left px-4 py-3 font-medium text-brand-600 hidden sm:table-cell">
                     <button onClick={() => toggleSort('created_at')} className="flex items-center gap-1 hover:text-brand-900">
@@ -180,31 +263,57 @@ export default function ClientsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-50">
-                {filtered.map((client) => (
-                  <tr
-                    key={client.id}
-                    onClick={() => router.push(`/admin/clients/${client.id}`)}
-                    className="hover:bg-brand-50/50 cursor-pointer transition-colors"
-                  >
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-brand-900">{client.first_name} {client.last_name}</p>
-                      <p className="text-xs text-brand-400 md:hidden">{client.email}</p>
-                    </td>
-                    <td className="px-4 py-3 text-brand-600 hidden md:table-cell">{client.email}</td>
-                    <td className="px-4 py-3 text-brand-600 font-medium">{client.inquiry_count}</td>
-                    <td className="px-4 py-3 text-brand-600 hidden lg:table-cell">{client.latest_interest}</td>
-                    <td className="px-4 py-3">
-                      {client.latest_status && (
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColor(client.latest_status)}`}>
-                          {statusLabel(client.latest_status)}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-brand-500 hidden sm:table-cell">
-                      {new Date(client.created_at).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
+                {filtered.map((client) => {
+                  const indicator = getContactIndicator(client.last_contact);
+                  return (
+                    <tr
+                      key={client.id}
+                      onClick={() => router.push(`/admin/clients/${client.id}`)}
+                      className="hover:bg-brand-50/50 cursor-pointer transition-colors"
+                    >
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-brand-900">{client.first_name} {client.last_name}</p>
+                        <p className="text-xs text-brand-400 md:hidden">{client.email}</p>
+                      </td>
+                      <td className="px-4 py-3 hidden lg:table-cell">
+                        <div className="flex flex-wrap gap-1">
+                          {client.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag.id}
+                              className="px-2 py-0.5 rounded-full text-[10px] font-medium text-white"
+                              style={{ backgroundColor: tag.color }}
+                            >
+                              {tag.name}
+                            </span>
+                          ))}
+                          {client.tags.length > 3 && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-brand-100 text-brand-500">
+                              +{client.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-brand-600 hidden md:table-cell">{client.email}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${indicator.color}`} title={indicator.label} />
+                          <span className="text-xs text-brand-500">{indicator.label}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-brand-600 font-medium">{client.inquiry_count}</td>
+                      <td className="px-4 py-3">
+                        {client.latest_status && (
+                          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColor(client.latest_status)}`}>
+                            {statusLabel(client.latest_status)}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-brand-500 hidden sm:table-cell">
+                        {new Date(client.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
