@@ -94,6 +94,15 @@ export default function ClientDetailPage() {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
 
+  // Create referrer form
+  const [showCreateReferrer, setShowCreateReferrer] = useState(false);
+  const [newReferrerFirst, setNewReferrerFirst] = useState('');
+  const [newReferrerLast, setNewReferrerLast] = useState('');
+  const [newReferrerEmail, setNewReferrerEmail] = useState('');
+  const [newReferrerPhone, setNewReferrerPhone] = useState('');
+  const [savingReferrer, setSavingReferrer] = useState(false);
+  const [referrerSearch, setReferrerSearch] = useState('');
+
   const [tab, setTab] = useState<'inquiries' | 'notes' | 'tasks' | 'activity'>('inquiries');
 
   const fetchAll = useCallback(async () => {
@@ -137,6 +146,44 @@ export default function ClientDetailPage() {
     const update: any = { [field]: value || null };
     await supabase.from('clients').update(update).eq('id', id);
     setClient({ ...client, ...update });
+    setEditingField(null);
+  }
+
+  // --- Create referrer (non-client) ---
+  async function createAndSetReferrer() {
+    if (!newReferrerFirst.trim() || !newReferrerLast.trim()) return;
+    setSavingReferrer(true);
+    // Create minimal client record
+    const { data: newClient } = await supabase
+      .from('clients')
+      .insert({
+        first_name: newReferrerFirst.trim(),
+        last_name: newReferrerLast.trim(),
+        email: newReferrerEmail.trim() || `${newReferrerFirst.trim().toLowerCase()}.${newReferrerLast.trim().toLowerCase()}@referrer.placeholder`,
+        phone: newReferrerPhone.trim() || null,
+      })
+      .select()
+      .single();
+
+    if (newClient) {
+      // Tag as "Referral Source"
+      const referralTag = allTags.find((t) => t.name === 'Referral Source');
+      if (referralTag) {
+        await supabase.from('client_tags').insert({ client_id: newClient.id, tag_id: referralTag.id });
+      }
+      // Set as referrer
+      await supabase.from('clients').update({ referred_by: newClient.id }).eq('id', id);
+      setClient(client ? { ...client, referred_by: newClient.id } : client);
+      setReferrer({ id: newClient.id, first_name: newClient.first_name, last_name: newClient.last_name });
+      setAllClients([...allClients, { id: newClient.id, first_name: newClient.first_name, last_name: newClient.last_name }]);
+    }
+
+    setShowCreateReferrer(false);
+    setNewReferrerFirst('');
+    setNewReferrerLast('');
+    setNewReferrerEmail('');
+    setNewReferrerPhone('');
+    setSavingReferrer(false);
     setEditingField(null);
   }
 
@@ -348,7 +395,7 @@ export default function ClientDetailPage() {
         </div>
 
         {/* Editable fields: Birthday, Closing Anniversary, Referral */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5 pt-5 border-t border-brand-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 pt-5 border-t border-brand-100">
           {/* Birthday */}
           <div>
             <label className="block text-xs font-medium text-brand-400 mb-1">Birthday</label>
@@ -398,21 +445,118 @@ export default function ClientDetailPage() {
           </div>
 
           {/* Referred By */}
-          <div>
+          <div className="sm:col-span-2 lg:col-span-2">
             <label className="block text-xs font-medium text-brand-400 mb-1">Referred By</label>
             {editingField === 'referred_by' ? (
-              <select
-                autoFocus
-                defaultValue={client.referred_by || ''}
-                onBlur={(e) => saveField('referred_by', e.target.value)}
-                onChange={(e) => saveField('referred_by', e.target.value)}
-                className="w-full px-2 py-1 text-sm border border-accent-300 rounded-lg outline-none"
-              >
-                <option value="">None</option>
-                {allClients.map((c) => (
-                  <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                {!showCreateReferrer ? (
+                  <div>
+                    {/* Search existing clients */}
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Search clients..."
+                      value={referrerSearch}
+                      onChange={(e) => setReferrerSearch(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-accent-300 rounded-lg outline-none mb-1"
+                    />
+                    <div className="max-h-36 overflow-y-auto border border-brand-200 rounded-lg bg-white">
+                      <button
+                        onClick={() => { saveField('referred_by', ''); setReferrer(null); setReferrerSearch(''); }}
+                        className="w-full text-left px-3 py-1.5 text-sm text-brand-400 hover:bg-brand-50"
+                      >
+                        None
+                      </button>
+                      {allClients
+                        .filter((c) => {
+                          if (!referrerSearch) return true;
+                          const s = referrerSearch.toLowerCase();
+                          return `${c.first_name} ${c.last_name}`.toLowerCase().includes(s);
+                        })
+                        .slice(0, 20)
+                        .map((c) => (
+                          <button
+                            key={c.id}
+                            onClick={() => {
+                              saveField('referred_by', c.id);
+                              setReferrer(c);
+                              setReferrerSearch('');
+                            }}
+                            className={`w-full text-left px-3 py-1.5 text-sm hover:bg-brand-50 ${client.referred_by === c.id ? 'bg-accent-50 text-accent-700 font-medium' : 'text-brand-700'}`}
+                          >
+                            {c.first_name} {c.last_name}
+                          </button>
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => setShowCreateReferrer(true)}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-accent-600 hover:text-accent-700"
+                      >
+                        <Plus className="h-3 w-3" /> Create new referrer
+                      </button>
+                      <button
+                        onClick={() => { setEditingField(null); setReferrerSearch(''); }}
+                        className="text-xs text-brand-400 hover:text-brand-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Create new referrer form */
+                  <div className="bg-brand-50 rounded-lg p-3 space-y-2">
+                    <p className="text-xs font-semibold text-brand-700">New Referrer</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        placeholder="First name *"
+                        value={newReferrerFirst}
+                        onChange={(e) => setNewReferrerFirst(e.target.value)}
+                        className="px-2 py-1.5 text-sm border border-brand-200 rounded-lg outline-none focus:border-accent-400"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Last name *"
+                        value={newReferrerLast}
+                        onChange={(e) => setNewReferrerLast(e.target.value)}
+                        className="px-2 py-1.5 text-sm border border-brand-200 rounded-lg outline-none focus:border-accent-400"
+                      />
+                    </div>
+                    <input
+                      type="email"
+                      placeholder="Email (optional)"
+                      value={newReferrerEmail}
+                      onChange={(e) => setNewReferrerEmail(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-brand-200 rounded-lg outline-none focus:border-accent-400"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Phone (optional)"
+                      value={newReferrerPhone}
+                      onChange={(e) => setNewReferrerPhone(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-brand-200 rounded-lg outline-none focus:border-accent-400"
+                    />
+                    <p className="text-[10px] text-brand-400">This creates a contact tagged as &ldquo;Referral Source&rdquo;</p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={createAndSetReferrer}
+                        disabled={!newReferrerFirst.trim() || !newReferrerLast.trim() || savingReferrer}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-900 text-white text-xs font-medium rounded-lg hover:bg-brand-800 disabled:opacity-40"
+                      >
+                        {savingReferrer ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                        Create & Set
+                      </button>
+                      <button
+                        onClick={() => setShowCreateReferrer(false)}
+                        className="text-xs text-brand-400 hover:text-brand-600"
+                      >
+                        Back
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <button
                 onClick={() => setEditingField('referred_by')}
