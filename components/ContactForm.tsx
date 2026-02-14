@@ -81,27 +81,24 @@ export function ContactForm() {
       );
 
       if (!res.ok) {
-        // Try to parse error JSON, but don't crash if it fails
         let serverMsg = '';
         try {
           const data = await res.json();
           serverMsg = data.error || '';
         } catch {
-          // Response wasn't JSON — ignore
+          // Response wasn't JSON
         }
 
-        // Use server message for 400s if available, otherwise use friendly default
         if (res.status === 400 && serverMsg) {
           throw new Error(serverMsg);
         }
         throw new Error(friendlyError(res.status));
       }
 
-      // Parse success response safely too
       try {
         await res.json();
       } catch {
-        // Success response wasn't JSON — that's fine, the insert worked
+        // Success response wasn't JSON — that's fine
       }
 
       setStatus('success');
@@ -121,7 +118,7 @@ export function ContactForm() {
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <CheckCircle2 className="h-12 w-12 text-accent-500 mb-4" />
         <h3 className="text-xl font-bold text-brand-900 mb-2">Thanks!</h3>
-        <p className="text-brand-500 mb-6">Katherine will be in touch shortly.</p>
+        <p className="text-brand-600 mb-6">Katherine will be in touch shortly.</p>
         <button
           onClick={() => { setStatus('idle'); setFieldErrors({}); }}
           className="text-accent-600 font-medium hover:underline"
@@ -133,66 +130,90 @@ export function ContactForm() {
   }
 
   const inputClass = (field: keyof FieldErrors) =>
-    `w-full px-4 py-3.5 bg-white rounded-xl border outline-none transition text-brand-900 placeholder:text-brand-400 text-sm ${
+    `w-full px-4 py-3.5 bg-white rounded-xl border outline-none transition-colors text-brand-900 placeholder:text-brand-400 text-sm ${
       fieldErrors[field]
         ? 'border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100'
         : 'border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100'
     }`;
 
-  const fieldError = (field: keyof FieldErrors) =>
+  const fieldError = (field: keyof FieldErrors, id: string) =>
     fieldErrors[field] ? (
-      <p className="text-rose-500 text-xs mt-1">{fieldErrors[field]}</p>
+      <p id={id} role="alert" className="text-rose-500 text-xs mt-1">{fieldErrors[field]}</p>
     ) : null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
+          <label htmlFor="first_name" className="sr-only">First Name</label>
           <input
+            id="first_name"
             name="first_name"
             type="text"
             placeholder="First Name"
             className={inputClass('first_name')}
+            aria-required="true"
+            aria-invalid={!!fieldErrors.first_name}
+            aria-describedby={fieldErrors.first_name ? 'first_name-error' : undefined}
             onChange={() => fieldErrors.first_name && setFieldErrors(prev => ({ ...prev, first_name: undefined }))}
           />
-          {fieldError('first_name')}
+          {fieldError('first_name', 'first_name-error')}
         </div>
         <div>
+          <label htmlFor="last_name" className="sr-only">Last Name</label>
           <input
+            id="last_name"
             name="last_name"
             type="text"
             placeholder="Last Name"
             className={inputClass('last_name')}
+            aria-required="true"
+            aria-invalid={!!fieldErrors.last_name}
+            aria-describedby={fieldErrors.last_name ? 'last_name-error' : undefined}
             onChange={() => fieldErrors.last_name && setFieldErrors(prev => ({ ...prev, last_name: undefined }))}
           />
-          {fieldError('last_name')}
+          {fieldError('last_name', 'last_name-error')}
         </div>
       </div>
       <div>
+        <label htmlFor="email" className="sr-only">Email Address</label>
         <input
+          id="email"
           name="email"
           type="email"
           placeholder="Email Address"
           className={inputClass('email')}
+          aria-required="true"
+          aria-invalid={!!fieldErrors.email}
+          aria-describedby={fieldErrors.email ? 'email-error' : undefined}
           onChange={() => fieldErrors.email && setFieldErrors(prev => ({ ...prev, email: undefined }))}
         />
-        {fieldError('email')}
+        {fieldError('email', 'email-error')}
       </div>
       <div>
+        <label htmlFor="phone" className="sr-only">Phone Number</label>
         <input
+          id="phone"
           name="phone"
           type="tel"
           placeholder="Phone Number"
           className={inputClass('phone')}
+          aria-invalid={!!fieldErrors.phone}
+          aria-describedby={fieldErrors.phone ? 'phone-error' : undefined}
           onChange={() => fieldErrors.phone && setFieldErrors(prev => ({ ...prev, phone: undefined }))}
         />
-        {fieldError('phone')}
+        {fieldError('phone', 'phone-error')}
       </div>
       <div>
+        <label htmlFor="interest_type" className="sr-only">I&apos;m interested in...</label>
         <select
+          id="interest_type"
           name="interest_type"
-          className={`${inputClass('interest_type')} ${fieldErrors.interest_type ? '' : 'text-brand-500'}`}
+          className={`${inputClass('interest_type')} ${fieldErrors.interest_type ? '' : 'text-brand-600'}`}
           defaultValue=""
+          aria-required="true"
+          aria-invalid={!!fieldErrors.interest_type}
+          aria-describedby={fieldErrors.interest_type ? 'interest_type-error' : undefined}
           onChange={() => fieldErrors.interest_type && setFieldErrors(prev => ({ ...prev, interest_type: undefined }))}
         >
           <option value="" disabled>I&apos;m interested in...</option>
@@ -203,17 +224,21 @@ export function ContactForm() {
           <option value="Buying a Business">Buying a Business</option>
           <option value="Selling a Business">Selling a Business</option>
         </select>
-        {fieldError('interest_type')}
+        {fieldError('interest_type', 'interest_type-error')}
       </div>
-      <textarea
-        name="message"
-        placeholder="Tell me about your goals..."
-        rows={4}
-        className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition resize-none text-brand-900 placeholder:text-brand-400 text-sm"
-      />
+      <div>
+        <label htmlFor="message" className="sr-only">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          placeholder="Tell me about your goals..."
+          rows={4}
+          className="w-full px-4 py-3.5 bg-white rounded-xl border border-brand-200 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 outline-none transition-colors resize-none text-brand-900 placeholder:text-brand-400 text-sm"
+        />
+      </div>
 
       {status === 'error' && (
-        <p className="text-rose-500 text-sm">{errorMsg}</p>
+        <p role="alert" className="text-rose-500 text-sm">{errorMsg}</p>
       )}
 
       <button
