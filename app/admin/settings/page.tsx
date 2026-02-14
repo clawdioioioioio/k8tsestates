@@ -64,7 +64,11 @@ export default function AdminSettingsPage() {
 
   async function loadAccounts() {
     const supabase = createClient();
-    const { data } = await supabase.from('social_accounts').select('*').eq('is_active', true);
+    // Only select what the UI needs — never fetch tokens to the frontend
+    const { data } = await supabase
+      .from('social_accounts')
+      .select('id, platform, platform_user_id, platform_username, is_active, token_expires_at, created_at, updated_at')
+      .eq('is_active', true);
     setAccounts(data || []);
     setLoading(false);
   }

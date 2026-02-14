@@ -173,18 +173,16 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
-    // Upsert social account
-    const { error: upsertError } = await supabase.from("social_accounts").upsert({
-      platform,
-      access_token: result.access_token,
-      refresh_token: result.refresh_token,
-      token_expires_at: result.token_expires_at,
-      scopes: result.scopes,
-      platform_user_id: result.platform_user_id,
-      platform_username: result.platform_username,
-      is_active: true,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "platform" });
+    // Upsert social account (encrypted via RPC)
+    const { error: upsertError } = await supabase.rpc("upsert_social_account", {
+      p_platform: platform,
+      p_access_token: result.access_token,
+      p_refresh_token: result.refresh_token || null,
+      p_token_expires_at: result.token_expires_at || null,
+      p_scopes: result.scopes || null,
+      p_platform_user_id: result.platform_user_id || null,
+      p_platform_username: result.platform_username || null,
+    });
 
     if (upsertError) throw new Error(`Failed to save account: ${upsertError.message}`);
 

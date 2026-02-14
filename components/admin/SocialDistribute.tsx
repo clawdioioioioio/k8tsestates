@@ -164,7 +164,24 @@ export function SocialDistribute({ postId, title, excerpt, slug, tags, status }:
     return (
       <div className="bg-brand-50 rounded-xl p-6">
         <h3 className="font-semibold text-brand-900 mb-2">Distribute & Share</h3>
-        <p className="text-sm text-brand-500">Publish this post to enable distribution options.</p>
+        <p className="text-sm text-brand-500 mb-4">Hit &quot;Publish&quot; to post to your blog, then distribute to social platforms.</p>
+        <div className="space-y-2 opacity-50 pointer-events-none">
+          {PLATFORMS.map((p) => {
+            const Icon = p.icon;
+            const account = getAccount(p.key);
+            return (
+              <div key={p.key} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-brand-100">
+                <div className={`p-1.5 rounded-md ${p.color}`}>
+                  <Icon className={`h-4 w-4 ${p.textColor}`} />
+                </div>
+                <span className="text-sm font-medium text-brand-700 flex-1">{p.name}</span>
+                <span className="text-xs text-brand-400">
+                  {account ? `@${account.platform_username || 'Connected'}` : 'Not connected'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

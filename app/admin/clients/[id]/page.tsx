@@ -138,7 +138,7 @@ export default function ClientDetailPage() {
   const [savingReferrer, setSavingReferrer] = useState(false);
   const [referrerSearch, setReferrerSearch] = useState('');
 
-  const [tab, setTab] = useState<'inquiries' | 'notes' | 'tasks' | 'activity' | 'transactions'>('inquiries');
+  const [tab, setTab] = useState<'inquiries' | 'notes' | 'tasks' | 'activity' | 'transactions' | 'open_houses'>('inquiries');
 
   const fetchAll = useCallback(async () => {
     const [clientRes, inqRes, notesRes, tasksRes, interactionsRes, tagsRes, clientTagsRes, allClientsRes, txRes, ohvRes] = await Promise.all([
@@ -761,6 +761,7 @@ export default function ClientDetailPage() {
         {([
           { key: 'transactions' as const, label: 'Transactions', icon: Building, count: transactions.length },
           { key: 'inquiries' as const, label: 'Inquiries', icon: FileText, count: inquiries.length },
+          { key: 'open_houses' as const, label: 'Open Houses', icon: Home, count: ohVisits.length },
           { key: 'activity' as const, label: 'Activity', icon: Activity, count: interactions.length },
           { key: 'notes' as const, label: 'Notes', icon: MessageSquare, count: clientNotes.length },
           { key: 'tasks' as const, label: 'Tasks', icon: CheckSquare, count: clientTasks.filter((t) => !t.completed).length },
@@ -896,30 +897,38 @@ export default function ClientDetailPage() {
             </div>
           )}
 
-          {/* Open House Visits */}
-          {ohVisits.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-sm font-semibold text-brand-700 mb-3 flex items-center gap-2">
-                <Home className="h-4 w-4" /> Open House Visits
-              </h3>
-              <div className="space-y-2">
-                {ohVisits.map((v) => (
-                  <Link
-                    key={v.id}
-                    href={`/admin/open-houses/${v.open_houses.id}`}
-                    className="block bg-white rounded-xl border border-brand-100 p-3 hover:bg-brand-50/50 transition-colors"
-                  >
-                    <p className="text-sm text-brand-900">
-                      Attended open house at <span className="font-medium">{v.open_houses.property_address}</span>
-                    </p>
+        </div>
+      )}
+
+      {/* Open Houses tab */}
+      {tab === 'open_houses' && (
+        <div className="space-y-3">
+          {ohVisits.length === 0 ? (
+            <div className="text-center py-12 text-brand-400">
+              <Home className="h-8 w-8 mx-auto mb-2 text-brand-300" />
+              <p>No open house visits yet</p>
+            </div>
+          ) : (
+            ohVisits.map((v) => (
+              <Link
+                key={v.id}
+                href={`/admin/open-houses/${v.open_houses.id}`}
+                className="block bg-white rounded-xl border border-brand-100 p-4 hover:shadow-sm transition-shadow"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-brand-900">{v.open_houses.property_address}</p>
                     <p className="text-xs text-brand-400 mt-0.5">
-                      {new Date(v.open_houses.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {new Date(v.open_houses.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                       {v.open_houses.city && ` · ${v.open_houses.city}`}
                     </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
+                  </div>
+                  <span className="text-xs text-brand-400">
+                    Signed in {new Date(v.signed_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </Link>
+            ))
           )}
         </div>
       )}
