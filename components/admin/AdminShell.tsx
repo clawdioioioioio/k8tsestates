@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { LayoutDashboard, Users, LogOut, Menu, X, Home, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, LogOut, Menu, X, Home, FileText, Settings } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/admin/clients', label: 'Clients', icon: Users },
   { href: '/admin/open-houses', label: 'Open Houses', icon: Home },
   { href: '/admin/content', label: 'Content', icon: FileText },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
 export function AdminShell({ children, userEmail }: { children: React.ReactNode; userEmail: string }) {

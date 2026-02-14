@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { TiptapEditor } from './TiptapEditor';
-import { SocialShare } from './SocialShare';
+import { SocialDistribute } from './SocialDistribute';
 import {
   ArrowLeft, Save, Eye, Upload, X, FileText, Video, Loader2,
 } from 'lucide-react';
@@ -411,8 +411,15 @@ export function PostEditor({ postId }: PostEditorProps) {
               )}
             </div>
 
-            {/* Social Share */}
-            <SocialShare title={title} excerpt={excerpt} slug={slug} tags={tags} status={status} />
+            {/* Social Distribution */}
+            {postId ? (
+              <SocialDistribute postId={postId} title={title} excerpt={excerpt} slug={slug} tags={tags} status={status} />
+            ) : (
+              <div className="bg-brand-50 rounded-xl p-6">
+                <h3 className="font-semibold text-brand-900 mb-2">Distribute & Share</h3>
+                <p className="text-sm text-brand-500">Save this post first to enable distribution options.</p>
+              </div>
+            )}
           </div>
         </div>
       )}
