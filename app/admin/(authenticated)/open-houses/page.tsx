@@ -9,6 +9,7 @@ import {
   Plus, MapPin, Calendar, Users, ExternalLink, Loader2, X,
   Copy, Check, ChevronDown, Trash2
 } from 'lucide-react';
+import AddressAutocomplete from '@/components/ui/AddressAutocomplete';
 
 type OpenHouse = {
   id: string;
@@ -168,11 +169,11 @@ export default function OpenHousesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-brand-500 mb-1">Property Address *</label>
-                <input
-                  type="text"
-                  required
+                <AddressAutocomplete
                   value={form.property_address}
-                  onChange={(e) => setForm({ ...form, property_address: e.target.value })}
+                  onChange={(val) => setForm({ ...form, property_address: val })}
+                  onSelect={(place) => setForm((f) => ({ ...f, property_address: place.address, city: place.city || f.city }))}
+                  required
                   className="w-full px-3 py-2 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400"
                 />
               </div>

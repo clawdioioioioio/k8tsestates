@@ -10,6 +10,7 @@ import {
   PhoneCall, MessageCircle, Home, Users, Gift, Award, X, Pencil,
   Activity, Building, DollarSign, Tag
 } from 'lucide-react';
+import AddressAutocomplete from '@/components/ui/AddressAutocomplete';
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'New', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
@@ -804,7 +805,12 @@ export default function ClientDetailPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-brand-500 mb-1">Property Address *</label>
-                <input type="text" required value={txForm.property_address} onChange={(e) => setTxForm({ ...txForm, property_address: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+                <AddressAutocomplete
+                  value={txForm.property_address}
+                  onChange={(val) => setTxForm({ ...txForm, property_address: val })}
+                  onSelect={(place) => setTxForm((f) => ({ ...f, property_address: place.address, city: place.city || f.city }))}
+                  required
+                />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
