@@ -47,12 +47,14 @@ async function refreshTokenIfNeeded(
       const fbResp = await fetch(tokenUrl);
       const fbData = await fbResp.json();
       if (fbData.access_token) {
-        await supabase.rpc("update_social_account_tokens", {
-          p_id: account.id,
-          p_access_token: fbData.access_token,
-          p_refresh_token: null,
-          p_token_expires_at: fbData.expires_in ? new Date(Date.now() + fbData.expires_in * 1000).toISOString() : null,
-        });
+        await supabase
+          .from("social_accounts")
+          .update({
+            access_token: fbData.access_token,
+            token_expires_at: fbData.expires_in ? new Date(Date.now() + fbData.expires_in * 1000).toISOString() : null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", account.id);
         return fbData.access_token;
       }
       throw new Error(`Failed to refresh Facebook token: ${JSON.stringify(fbData)}`);
@@ -78,12 +80,15 @@ async function refreshTokenIfNeeded(
   const data = await resp.json();
   if (!data.access_token) throw new Error(`Token refresh failed for ${account.platform}: ${JSON.stringify(data)}`);
 
-  await supabase.rpc("update_social_account_tokens", {
-    p_id: account.id,
-    p_access_token: data.access_token,
-    p_refresh_token: data.refresh_token || null,
-    p_token_expires_at: data.expires_in ? new Date(Date.now() + data.expires_in * 1000).toISOString() : null,
-  });
+  await supabase
+    .from("social_accounts")
+    .update({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token || null,
+      token_expires_at: data.expires_in ? new Date(Date.now() + data.expires_in * 1000).toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", account.id);
 
   return data.access_token;
 }
@@ -198,10 +203,13 @@ serve(async (req) => {
       .from("posts").select("*").eq("id", post_id).single();
     if (postError || !post) return jsonResponse({ error: "Post not found" }, 404);
 
-    // Get social account (decrypted via RPC)
-    const { data: accounts, error: accountError } = await supabase
-      .rpc("get_decrypted_social_account", { p_platform: platform });
-    const account = accounts?.[0] || null;
+    // Get social account
+    const { data: account, error: accountError } = await supabase
+      .from("social_accounts")
+      .select("*")
+      .eq("platform", platform)
+      .eq("is_active", true)
+      .single();
     if (accountError || !account) return jsonResponse({ error: `No active ${platform} account connected` }, 400);
 
     // Upsert distribution record as publishing
