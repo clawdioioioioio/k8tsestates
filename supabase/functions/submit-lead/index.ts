@@ -30,7 +30,6 @@ serve(async (req) => {
       );
     }
 
-    // Basic email validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return new Response(JSON.stringify({ error: "Invalid email address" }), {
         status: 400,
@@ -38,21 +37,54 @@ serve(async (req) => {
       });
     }
 
-    // Insert lead with service role (bypasses RLS)
     const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
-    const { error } = await supabase.from("leads").insert({
-      first_name,
-      last_name,
-      email,
-      phone,
+
+    // Check if client with this email already exists
+    const { data: existingClient } = await supabase
+      .from("clients")
+      .select("id, first_name, last_name, phone")
+      .eq("email", email.toLowerCase().trim())
+      .single();
+
+    let clientId: string;
+
+    if (existingClient) {
+      clientId = existingClient.id;
+      // Update name/phone if different
+      const updates: Record<string, string> = {};
+      if (existingClient.first_name !== first_name) updates.first_name = first_name;
+      if (existingClient.last_name !== last_name) updates.last_name = last_name;
+      if (phone && existingClient.phone !== phone) updates.phone = phone;
+      if (Object.keys(updates).length > 0) {
+        await supabase.from("clients").update(updates).eq("id", clientId);
+      }
+    } else {
+      // Create new client
+      const { data: newClient, error: clientError } = await supabase
+        .from("clients")
+        .insert({
+          first_name,
+          last_name,
+          email: email.toLowerCase().trim(),
+          phone,
+        })
+        .select("id")
+        .single();
+      if (clientError) throw clientError;
+      clientId = newClient.id;
+    }
+
+    // Create inquiry
+    const { error: inquiryError } = await supabase.from("inquiries").insert({
+      client_id: clientId,
       interest_type,
       message,
     });
-
-    if (error) throw error;
+    if (inquiryError) throw inquiryError;
 
     // Send email notification via Resend
     try {
+      const isReturning = !!existingClient;
       await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -62,19 +94,19 @@ serve(async (req) => {
         body: JSON.stringify({
           from: "K8ts Estates <leads@k8tsestates.com>",
           to: "kminovski@gmail.com",
-          subject: `New Lead: ${first_name} ${last_name}`,
+          subject: `${isReturning ? "Returning" : "New"} Inquiry: ${first_name} ${last_name}`,
           html: `
-            <h2>New Contact Form Submission</h2>
+            <h2>${isReturning ? "Returning Client" : "New Contact Form Submission"}</h2>
             <p><strong>Name:</strong> ${first_name} ${last_name}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
             <p><strong>Interest:</strong> ${interest_type}</p>
             <p><strong>Message:</strong> ${message || "None"}</p>
+            ${isReturning ? "<p><em>This client has submitted inquiries before.</em></p>" : ""}
           `,
         }),
       });
     } catch {
-      // Email failure shouldn't fail the lead submission
       console.error("Failed to send email notification");
     }
 
