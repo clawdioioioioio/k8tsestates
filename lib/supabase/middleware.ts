@@ -27,22 +27,15 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Check if user is an admin
-  // Try admin_users table first; fall back to hardcoded list if table doesn't exist yet
-  const FALLBACK_ADMIN_EMAILS = ['kminovski@gmail.com', 'nminovski@gmail.com'];
+  // Check if user is an admin via admin_users table
   let isAdmin = false;
   if (user?.email) {
-    const { data: adminUser, error: adminError } = await supabase
+    const { data: adminUser } = await supabase
       .from('admin_users')
       .select('id')
       .eq('email', user.email)
       .single();
-    if (adminError && adminError.code === '42P01') {
-      // Table doesn't exist yet — use fallback
-      isAdmin = FALLBACK_ADMIN_EMAILS.includes(user.email);
-    } else {
-      isAdmin = !!adminUser;
-    }
+    isAdmin = !!adminUser;
   }
 
   // Protect admin routes (except login)
