@@ -7,7 +7,7 @@ import Link from 'next/link';
 import QRCode from 'qrcode';
 import {
   ArrowLeft, MapPin, Calendar, Users, Copy,
-  Check, ExternalLink, X
+  Check, ExternalLink, X, Trash2, Loader2
 } from 'lucide-react';
 
 type OpenHouseDetail = {
@@ -54,6 +54,8 @@ export default function OpenHouseDetailPage() {
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [showQR, setShowQR] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchAll = useCallback(async () => {
     const supabase = createClient();
@@ -113,6 +115,14 @@ export default function OpenHouseDetailPage() {
     link.click();
   }
 
+  async function handleDelete() {
+    if (!oh) return;
+    setDeleting(true);
+    const supabase = createClient();
+    await supabase.from('open_houses').delete().eq('id', id);
+    router.push('/admin/open-houses');
+  }
+
   if (loading) return <div className="p-8 text-center text-brand-400">Loading...</div>;
   if (!oh) return <div className="p-8 text-center text-brand-400">Open house not found</div>;
 
@@ -152,6 +162,13 @@ export default function OpenHouseDetailPage() {
               <option value="active">Active</option>
               <option value="completed">Completed</option>
             </select>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="p-1.5 text-brand-400 hover:text-rose-500 transition-colors"
+              title="Delete open house"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
@@ -261,6 +278,41 @@ export default function OpenHouseDetailPage() {
             <div className="flex gap-2">
               <button onClick={downloadQR} className="flex-1 py-2 bg-brand-900 text-white text-sm font-medium rounded-lg hover:bg-brand-800">Download</button>
               <button onClick={() => setShowQR(false)} className="flex-1 py-2 border border-brand-200 text-brand-700 text-sm font-medium rounded-lg hover:bg-brand-50">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30" onClick={() => !deleting && setShowDeleteModal(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-brand-900">Delete Open House</h3>
+              <button onClick={() => setShowDeleteModal(false)} disabled={deleting} className="text-brand-400 hover:text-brand-700 disabled:opacity-40">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-sm text-brand-600 mb-2">{oh?.property_address}</p>
+            <p className="text-sm text-brand-500 mb-6">
+              Delete this open house? This will remove all visitor records. This cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                className="flex-1 py-2 border border-brand-200 text-brand-700 text-sm font-medium rounded-lg hover:bg-brand-50 disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 bg-rose-600 text-white text-sm font-medium rounded-lg hover:bg-rose-700 disabled:opacity-40"
+              >
+                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Delete
+              </button>
             </div>
           </div>
         </div>

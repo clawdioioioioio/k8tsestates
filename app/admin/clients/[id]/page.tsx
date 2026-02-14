@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import {
@@ -77,6 +77,7 @@ const TX_STATUSES = [
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const supabase = createClient();
 
   const [client, setClient] = useState<Client | null>(null);
@@ -93,6 +94,12 @@ export default function ClientDetailPage() {
   const [allClients, setAllClients] = useState<{ id: string; first_name: string; last_name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedInquiry, setExpandedInquiry] = useState<string | null>(null);
+
+  // Delete modals
+  const [deleteInquiryModal, setDeleteInquiryModal] = useState<{ id: string; type: string } | null>(null);
+  const [deletingInquiry, setDeletingInquiry] = useState(false);
+  const [deleteClientModal, setDeleteClientModal] = useState(false);
+  const [deletingClient, setDeletingClient] = useState(false);
 
   // Forms
   const [newClientNote, setNewClientNote] = useState('');
@@ -336,6 +343,27 @@ export default function ClientDetailPage() {
     await supabase.from('tasks').delete().eq('id', taskId);
   }
 
+  // --- Delete inquiry ---
+  async function handleDeleteInquiry() {
+    if (!deleteInquiryModal) return;
+    setDeletingInquiry(true);
+    await supabase.from('inquiries').delete().eq('id', deleteInquiryModal.id);
+    setInquiries(inquiries.filter((i) => i.id !== deleteInquiryModal.id));
+    // Remove related notes and tasks from state
+    setNotes(notes.filter((n) => n.inquiry_id !== deleteInquiryModal.id));
+    setTasks(tasks.filter((t) => t.inquiry_id !== deleteInquiryModal.id));
+    setDeleteInquiryModal(null);
+    setDeletingInquiry(false);
+  }
+
+  // --- Delete client ---
+  async function handleDeleteClient() {
+    if (!client) return;
+    setDeletingClient(true);
+    await supabase.from('clients').delete().eq('id', id);
+    router.push('/admin/clients');
+  }
+
   // --- Transactions ---
   async function addTransaction() {
     if (!txForm.property_address) return;
@@ -455,6 +483,13 @@ export default function ClientDetailPage() {
               </span>
             </div>
           </div>
+          <button
+            onClick={() => setDeleteClientModal(true)}
+            className="p-1.5 text-brand-400 hover:text-rose-500 transition-colors"
+            title="Delete client"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
         </div>
 
         {/* Tags */}
@@ -1005,7 +1040,7 @@ export default function ClientDetailPage() {
             return (
               <div key={inq.id} className="bg-white rounded-xl border border-brand-100 overflow-hidden">
                 <div
-                  className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-brand-50/50 transition-colors"
+                  className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-brand-50/50 transition-colors group"
                   onClick={() => setExpandedInquiry(expanded ? null : inq.id)}
                 >
                   <div className="flex-1 min-w-0">
@@ -1020,8 +1055,18 @@ export default function ClientDetailPage() {
                       {inq.message && ` — "${inq.message.slice(0, 80)}${inq.message.length > 80 ? '...' : ''}"`}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 ml-3">
+                  <div className="flex items-center gap-3 ml-3">
                     <span className="text-xs text-brand-400">{inqNotes.length} notes · {inqTasks.length} tasks</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteInquiryModal({ id: inq.id, type: inq.interest_type });
+                      }}
+                      className="p-1 text-brand-400 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete inquiry"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                     {expanded ? <ChevronUp className="h-4 w-4 text-brand-400" /> : <ChevronDown className="h-4 w-4 text-brand-400" />}
                   </div>
                 </div>
@@ -1232,6 +1277,76 @@ export default function ClientDetailPage() {
             </div>
           ))}
           {clientTasks.length === 0 && <p className="text-center text-brand-400 text-sm py-6">No client-level tasks</p>}
+        </div>
+      )}
+
+      {/* Delete Inquiry Confirmation Modal */}
+      {deleteInquiryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30" onClick={() => !deletingInquiry && setDeleteInquiryModal(null)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-brand-900">Delete Inquiry</h3>
+              <button onClick={() => setDeleteInquiryModal(null)} disabled={deletingInquiry} className="text-brand-400 hover:text-brand-700 disabled:opacity-40">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-sm text-brand-600 mb-2">{deleteInquiryModal.type}</p>
+            <p className="text-sm text-brand-500 mb-6">
+              Delete this inquiry? Notes and tasks associated with it will also be removed. This cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteInquiryModal(null)}
+                disabled={deletingInquiry}
+                className="flex-1 py-2 border border-brand-200 text-brand-700 text-sm font-medium rounded-lg hover:bg-brand-50 disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteInquiry}
+                disabled={deletingInquiry}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 bg-rose-600 text-white text-sm font-medium rounded-lg hover:bg-rose-700 disabled:opacity-40"
+              >
+                {deletingInquiry ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Client Confirmation Modal */}
+      {deleteClientModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30" onClick={() => !deletingClient && setDeleteClientModal(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-brand-900">Delete Client</h3>
+              <button onClick={() => setDeleteClientModal(false)} disabled={deletingClient} className="text-brand-400 hover:text-brand-700 disabled:opacity-40">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-sm text-brand-600 mb-2">{client.first_name} {client.last_name}</p>
+            <p className="text-sm text-brand-500 mb-6">
+              Delete this client and all their data (inquiries, notes, tasks, interactions, transactions)? This cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteClientModal(false)}
+                disabled={deletingClient}
+                className="flex-1 py-2 border border-brand-200 text-brand-700 text-sm font-medium rounded-lg hover:bg-brand-50 disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteClient}
+                disabled={deletingClient}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 bg-rose-600 text-white text-sm font-medium rounded-lg hover:bg-rose-700 disabled:opacity-40"
+              >
+                {deletingClient ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
