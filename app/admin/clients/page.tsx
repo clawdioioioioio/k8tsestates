@@ -28,6 +28,8 @@ type ClientRow = {
   latest_interest: string;
   last_contact: string | null;
   tags: Tag[];
+  deal_count: number;
+  deal_types: string[];
 };
 
 type SortField = 'name' | 'created_at' | 'inquiry_count' | 'last_contact';
@@ -56,11 +58,12 @@ export default function ClientsPage() {
   const fetchClients = useCallback(async () => {
     const supabase = createClient();
 
-    const [clientsRes, tagsRes, clientTagsRes, interactionsRes] = await Promise.all([
+    const [clientsRes, tagsRes, clientTagsRes, interactionsRes, txRes] = await Promise.all([
       supabase.from('clients').select('*, inquiries(id, status, interest_type, created_at)').order('created_at', { ascending: false }),
       supabase.from('tags').select('*').order('name'),
       supabase.from('client_tags').select('client_id, tag_id'),
       supabase.from('interactions').select('client_id, interaction_date').order('interaction_date', { ascending: false }),
+      supabase.from('transactions').select('client_id, type'),
     ]);
 
     const tags = tagsRes.data || [];
@@ -78,6 +81,15 @@ export default function ClientsPage() {
       if (!lastContactMap.has(i.client_id)) {
         lastContactMap.set(i.client_id, i.interaction_date);
       }
+    });
+
+    // Transaction counts per client
+    const txCountMap = new Map<string, number>();
+    const txTypeMap = new Map<string, Set<string>>();
+    (txRes.data || []).forEach((tx: any) => {
+      txCountMap.set(tx.client_id, (txCountMap.get(tx.client_id) || 0) + 1);
+      if (!txTypeMap.has(tx.client_id)) txTypeMap.set(tx.client_id, new Set());
+      txTypeMap.get(tx.client_id)!.add(tx.type);
     });
 
     if (!clientsRes.data) { setClients([]); setLoading(false); return; }
@@ -100,6 +112,8 @@ export default function ClientsPage() {
         latest_interest: sorted[0]?.interest_type || '',
         last_contact: lastContactMap.get(c.id) || null,
         tags: clientTags,
+        deal_count: txCountMap.get(c.id) || 0,
+        deal_types: Array.from(txTypeMap.get(c.id) || []),
       };
     });
 
@@ -254,6 +268,7 @@ export default function ClientsPage() {
                       Inquiries <ArrowUpDown className="h-3 w-3" />
                     </button>
                   </th>
+                  <th className="text-left px-4 py-3 font-medium text-brand-600 hidden lg:table-cell">Deals</th>
                   <th className="text-left px-4 py-3 font-medium text-brand-600">Latest Status</th>
                   <th className="text-left px-4 py-3 font-medium text-brand-600 hidden sm:table-cell">
                     <button onClick={() => toggleSort('created_at')} className="flex items-center gap-1 hover:text-brand-900">
@@ -301,6 +316,31 @@ export default function ClientsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-brand-600 font-medium">{client.inquiry_count}</td>
+                      <td className="px-4 py-3 hidden lg:table-cell">
+                        {client.deal_count > 0 ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-brand-600 font-medium">{client.deal_count}</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                              client.deal_types.includes('buy') && client.deal_types.includes('sell')
+                                ? 'bg-purple-100 text-purple-700'
+                                : client.deal_types.includes('buy')
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {client.deal_types.includes('buy') && client.deal_types.includes('sell')
+                                ? 'Buyer & Seller'
+                                : client.deal_types.includes('buy')
+                                ? 'Buyer'
+                                : 'Seller'}
+                            </span>
+                            {client.deal_count >= 2 && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-medium">Repeat</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-brand-300">—</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         {client.latest_status && (
                           <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColor(client.latest_status)}`}>

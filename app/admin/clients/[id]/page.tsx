@@ -8,7 +8,7 @@ import {
   ArrowLeft, Mail, Phone, Calendar, MessageSquare, CheckSquare,
   Plus, Check, Loader2, Trash2, ChevronDown, ChevronUp, FileText,
   PhoneCall, MessageCircle, Home, Users, Gift, Award, X, Pencil,
-  Activity
+  Activity, Building, DollarSign, Tag
 } from 'lucide-react';
 
 const STATUS_OPTIONS = [
@@ -56,6 +56,24 @@ type Tag = {
 type ReferredClient = {
   id: string; first_name: string; last_name: string;
 };
+type Transaction = {
+  id: string; client_id: string; type: string; property_address: string;
+  city: string | null; neighborhood: string | null; property_type: string | null;
+  price: number | null; closing_date: string | null; mls_number: string | null;
+  status: string; notes: string | null; created_at: string; updated_at: string;
+};
+type OpenHouseVisit = {
+  id: string; signed_in_at: string;
+  open_houses: { id: string; property_address: string; date: string; city: string | null };
+};
+
+const PROPERTY_TYPES = ['detached', 'semi', 'townhouse', 'condo', 'commercial', 'land'];
+const TX_STATUSES = [
+  { value: 'active', label: 'Active', color: 'bg-blue-100 text-blue-700' },
+  { value: 'pending', label: 'Pending', color: 'bg-amber-100 text-amber-700' },
+  { value: 'closed', label: 'Closed', color: 'bg-emerald-100 text-emerald-700' },
+  { value: 'fell_through', label: 'Fell Through', color: 'bg-rose-100 text-rose-700' },
+];
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -68,6 +86,8 @@ export default function ClientDetailPage() {
   const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [clientTagIds, setClientTagIds] = useState<string[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [ohVisits, setOhVisits] = useState<OpenHouseVisit[]>([]);
   const [referrer, setReferrer] = useState<{ id: string; first_name: string; last_name: string } | null>(null);
   const [referrals, setReferrals] = useState<ReferredClient[]>([]);
   const [allClients, setAllClients] = useState<{ id: string; first_name: string; last_name: string }[]>([]);
@@ -84,6 +104,14 @@ export default function ClientDetailPage() {
   const [savingTask, setSavingTask] = useState<Record<string, boolean>>({});
 
   // Interaction form
+  const [showTxForm, setShowTxForm] = useState(false);
+  const [savingTx, setSavingTx] = useState(false);
+  const [editingTx, setEditingTx] = useState<string | null>(null);
+  const [txForm, setTxForm] = useState({
+    type: 'buy', property_address: '', city: '', neighborhood: '', property_type: '',
+    price: '', closing_date: '', mls_number: '', status: 'active', notes: '',
+  });
+
   const [showInteractionForm, setShowInteractionForm] = useState(false);
   const [interactionType, setInteractionType] = useState('call');
   const [interactionNotes, setInteractionNotes] = useState('');
@@ -103,10 +131,10 @@ export default function ClientDetailPage() {
   const [savingReferrer, setSavingReferrer] = useState(false);
   const [referrerSearch, setReferrerSearch] = useState('');
 
-  const [tab, setTab] = useState<'inquiries' | 'notes' | 'tasks' | 'activity'>('inquiries');
+  const [tab, setTab] = useState<'inquiries' | 'notes' | 'tasks' | 'activity' | 'transactions'>('inquiries');
 
   const fetchAll = useCallback(async () => {
-    const [clientRes, inqRes, notesRes, tasksRes, interactionsRes, tagsRes, clientTagsRes, allClientsRes] = await Promise.all([
+    const [clientRes, inqRes, notesRes, tasksRes, interactionsRes, tagsRes, clientTagsRes, allClientsRes, txRes, ohvRes] = await Promise.all([
       supabase.from('clients').select('*').eq('id', id).single(),
       supabase.from('inquiries').select('*').eq('client_id', id).order('created_at', { ascending: false }),
       supabase.from('notes').select('*').eq('client_id', id).order('created_at', { ascending: false }),
@@ -115,6 +143,8 @@ export default function ClientDetailPage() {
       supabase.from('tags').select('*').order('name'),
       supabase.from('client_tags').select('tag_id').eq('client_id', id),
       supabase.from('clients').select('id, first_name, last_name').order('first_name'),
+      supabase.from('transactions').select('*').eq('client_id', id).order('created_at', { ascending: false }),
+      supabase.from('open_house_visitors').select('id, signed_in_at, open_houses(id, property_address, date, city)').eq('client_id', id).order('signed_in_at', { ascending: false }),
     ]);
     setClient(clientRes.data);
     setInquiries(inqRes.data || []);
@@ -124,6 +154,8 @@ export default function ClientDetailPage() {
     setAllTags(tagsRes.data || []);
     setClientTagIds((clientTagsRes.data || []).map((ct: any) => ct.tag_id));
     setAllClients((allClientsRes.data || []).filter((c: any) => c.id !== id));
+    setTransactions(txRes.data || []);
+    setOhVisits((ohvRes.data || []) as any);
 
     // Fetch referrer
     if (clientRes.data?.referred_by) {
@@ -302,6 +334,72 @@ export default function ClientDetailPage() {
   async function deleteTask(taskId: string) {
     setTasks(tasks.filter((t) => t.id !== taskId));
     await supabase.from('tasks').delete().eq('id', taskId);
+  }
+
+  // --- Transactions ---
+  async function addTransaction() {
+    if (!txForm.property_address) return;
+    setSavingTx(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    const payload = {
+      client_id: id,
+      type: txForm.type,
+      property_address: txForm.property_address,
+      city: txForm.city || null,
+      neighborhood: txForm.neighborhood || null,
+      property_type: txForm.property_type || null,
+      price: txForm.price ? parseFloat(txForm.price) : null,
+      closing_date: txForm.closing_date || null,
+      mls_number: txForm.mls_number || null,
+      status: txForm.status,
+      notes: txForm.notes || null,
+      created_by: user?.id || null,
+    };
+
+    if (editingTx) {
+      const { data } = await supabase.from('transactions').update(payload).eq('id', editingTx).select().single();
+      if (data) setTransactions(transactions.map((t) => t.id === editingTx ? data : t));
+    } else {
+      const { data } = await supabase.from('transactions').insert(payload).select().single();
+      if (data) setTransactions([data, ...transactions]);
+    }
+
+    // Auto-update closing anniversary from most recent closed tx
+    const allTx = editingTx
+      ? transactions.map((t) => t.id === editingTx ? { ...t, ...payload } : t)
+      : [{ ...payload, id: 'new' }, ...transactions];
+    const closedTx = allTx.filter((t) => t.status === 'closed' && t.closing_date).sort((a, b) => (b.closing_date || '').localeCompare(a.closing_date || ''));
+    if (closedTx.length > 0) {
+      await supabase.from('clients').update({ closing_anniversary: closedTx[0].closing_date }).eq('id', id);
+      if (client) setClient({ ...client, closing_anniversary: closedTx[0].closing_date });
+    }
+
+    setTxForm({ type: 'buy', property_address: '', city: '', neighborhood: '', property_type: '', price: '', closing_date: '', mls_number: '', status: 'active', notes: '' });
+    setShowTxForm(false);
+    setEditingTx(null);
+    setSavingTx(false);
+  }
+
+  function startEditTx(tx: Transaction) {
+    setTxForm({
+      type: tx.type,
+      property_address: tx.property_address,
+      city: tx.city || '',
+      neighborhood: tx.neighborhood || '',
+      property_type: tx.property_type || '',
+      price: tx.price ? String(tx.price) : '',
+      closing_date: tx.closing_date || '',
+      mls_number: tx.mls_number || '',
+      status: tx.status,
+      notes: tx.notes || '',
+    });
+    setEditingTx(tx.id);
+    setShowTxForm(true);
+  }
+
+  async function deleteTx(txId: string) {
+    setTransactions(transactions.filter((t) => t.id !== txId));
+    await supabase.from('transactions').delete().eq('id', txId);
   }
 
   // --- Helpers ---
@@ -626,11 +724,12 @@ export default function ClientDetailPage() {
       {/* Tabs */}
       <div className="flex gap-1 mb-4 bg-white rounded-lg p-1 border border-brand-100 w-fit overflow-x-auto">
         {([
-          { key: 'inquiries', label: 'Inquiries', icon: FileText, count: inquiries.length },
-          { key: 'activity', label: 'Activity', icon: Activity, count: interactions.length },
-          { key: 'notes', label: 'Notes', icon: MessageSquare, count: clientNotes.length },
-          { key: 'tasks', label: 'Tasks', icon: CheckSquare, count: clientTasks.filter((t) => !t.completed).length },
-        ] as const).map(({ key, label, icon: Icon, count }) => (
+          { key: 'transactions' as const, label: 'Transactions', icon: Building, count: transactions.length },
+          { key: 'inquiries' as const, label: 'Inquiries', icon: FileText, count: inquiries.length },
+          { key: 'activity' as const, label: 'Activity', icon: Activity, count: interactions.length },
+          { key: 'notes' as const, label: 'Notes', icon: MessageSquare, count: clientNotes.length },
+          { key: 'tasks' as const, label: 'Tasks', icon: CheckSquare, count: clientTasks.filter((t) => !t.completed).length },
+        ]).map(({ key, label, icon: Icon, count }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
@@ -642,6 +741,153 @@ export default function ClientDetailPage() {
           </button>
         ))}
       </div>
+
+      {/* Transactions tab */}
+      {tab === 'transactions' && (
+        <div className="space-y-4">
+          {showTxForm ? (
+            <div className="bg-white rounded-xl border border-brand-100 p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-brand-900 text-sm">{editingTx ? 'Edit Transaction' : 'Add Transaction'}</h3>
+                <button onClick={() => { setShowTxForm(false); setEditingTx(null); }} className="text-brand-400 hover:text-brand-700"><X className="h-4 w-4" /></button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">Type *</label>
+                  <select value={txForm.type} onChange={(e) => setTxForm({ ...txForm, type: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400">
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">Status</label>
+                  <select value={txForm.status} onChange={(e) => setTxForm({ ...txForm, status: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400">
+                    {TX_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-brand-500 mb-1">Property Address *</label>
+                <input type="text" required value={txForm.property_address} onChange={(e) => setTxForm({ ...txForm, property_address: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">City</label>
+                  <input type="text" value={txForm.city} onChange={(e) => setTxForm({ ...txForm, city: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">Neighborhood</label>
+                  <input type="text" value={txForm.neighborhood} onChange={(e) => setTxForm({ ...txForm, neighborhood: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">Property Type</label>
+                  <select value={txForm.property_type} onChange={(e) => setTxForm({ ...txForm, property_type: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400">
+                    <option value="">—</option>
+                    {PROPERTY_TYPES.map((pt) => <option key={pt} value={pt}>{pt.charAt(0).toUpperCase() + pt.slice(1)}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">Price</label>
+                  <input type="number" value={txForm.price} onChange={(e) => setTxForm({ ...txForm, price: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">Closing Date</label>
+                  <input type="date" value={txForm.closing_date} onChange={(e) => setTxForm({ ...txForm, closing_date: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-brand-500 mb-1">MLS #</label>
+                  <input type="text" value={txForm.mls_number} onChange={(e) => setTxForm({ ...txForm, mls_number: e.target.value })} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-brand-500 mb-1">Notes</label>
+                <textarea value={txForm.notes} onChange={(e) => setTxForm({ ...txForm, notes: e.target.value })} rows={2} className="w-full px-3 py-2 bg-brand-50 rounded-lg border border-brand-200 text-sm text-brand-900 outline-none focus:border-accent-400 resize-none" />
+              </div>
+              <div className="flex justify-end">
+                <button onClick={addTransaction} disabled={!txForm.property_address || savingTx} className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-900 text-white text-sm font-medium rounded-lg hover:bg-brand-800 disabled:opacity-40 transition-colors">
+                  {savingTx ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+                  {editingTx ? 'Update' : 'Add'} Transaction
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={() => setShowTxForm(true)} className="w-full bg-white rounded-xl border border-dashed border-brand-200 p-4 text-sm font-medium text-brand-500 hover:border-accent-400 hover:text-accent-600 transition-colors flex items-center justify-center gap-2">
+              <Plus className="h-4 w-4" /> Add Transaction
+            </button>
+          )}
+
+          {transactions.length === 0 ? (
+            <div className="text-center py-8 text-brand-400 text-sm">
+              <Building className="h-8 w-8 mx-auto mb-2 text-brand-300" />
+              No transactions yet
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {transactions.map((tx) => {
+                const sc = TX_STATUSES.find((s) => s.value === tx.status);
+                return (
+                  <div key={tx.id} className="bg-white rounded-xl border border-brand-100 p-4 group">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="w-9 h-9 rounded-lg bg-brand-50 flex items-center justify-center flex-shrink-0 text-lg">
+                          {tx.type === 'buy' ? '🏠' : '🏷️'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-medium text-brand-900">{tx.property_address}</p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${sc?.color || ''}`}>{sc?.label || tx.status}</span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-brand-500 mt-1">
+                            <span className="capitalize">{tx.type}</span>
+                            {tx.city && <span>{tx.city}</span>}
+                            {tx.price && <span>${tx.price.toLocaleString()}</span>}
+                            {tx.closing_date && <span>Closing: {new Date(tx.closing_date + 'T00:00:00').toLocaleDateString()}</span>}
+                            {tx.mls_number && <span>MLS# {tx.mls_number}</span>}
+                            {tx.property_type && <span className="capitalize">{tx.property_type}</span>}
+                          </div>
+                          {tx.notes && <p className="text-xs text-brand-400 mt-1">{tx.notes}</p>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onClick={() => startEditTx(tx)} className="p-1 text-brand-400 hover:text-accent-600"><Pencil className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => deleteTx(tx.id)} className="p-1 text-brand-400 hover:text-rose-500"><Trash2 className="h-3.5 w-3.5" /></button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Open House Visits */}
+          {ohVisits.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-brand-700 mb-3 flex items-center gap-2">
+                <Home className="h-4 w-4" /> Open House Visits
+              </h3>
+              <div className="space-y-2">
+                {ohVisits.map((v) => (
+                  <Link
+                    key={v.id}
+                    href={`/admin/open-houses/${v.open_houses.id}`}
+                    className="block bg-white rounded-xl border border-brand-100 p-3 hover:bg-brand-50/50 transition-colors"
+                  >
+                    <p className="text-sm text-brand-900">
+                      Attended open house at <span className="font-medium">{v.open_houses.property_address}</span>
+                    </p>
+                    <p className="text-xs text-brand-400 mt-0.5">
+                      {new Date(v.open_houses.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {v.open_houses.city && ` · ${v.open_houses.city}`}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Activity tab */}
       {tab === 'activity' && (

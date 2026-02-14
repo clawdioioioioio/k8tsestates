@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { Users, UserPlus, PhoneCall, CheckCircle2, ArrowRight, FileText, TrendingUp, Gift, AlertTriangle, Award } from 'lucide-react';
+import { Users, UserPlus, PhoneCall, CheckCircle2, ArrowRight, FileText, TrendingUp, Gift, AlertTriangle, Award, DollarSign, Building, Repeat } from 'lucide-react';
 import { GoingColdWidget } from '@/components/admin/GoingColdWidget';
 
 const STATUS_CONFIG = {
@@ -17,6 +17,7 @@ export default async function AdminDashboard() {
   const { data: clients } = await supabase.from('clients').select('id, first_name, last_name, birthday, closing_anniversary, referred_by');
   const { data: inquiries } = await supabase.from('inquiries').select('id, status, client_id');
   const { data: interactions } = await supabase.from('interactions').select('client_id, interaction_date').order('interaction_date', { ascending: false });
+  const { data: allTransactions } = await supabase.from('transactions').select('client_id, status, price, type');
 
   const inquiryCounts: Record<string, number> = { new: 0, contacted: 0, active: 0, closed_won: 0, closed_lost: 0 };
   inquiries?.forEach((i) => {
@@ -97,6 +98,16 @@ export default async function AdminDashboard() {
     })
     .filter(Boolean) as { id: string; first_name: string; last_name: string; referral_count: number }[];
 
+  // --- Transaction metrics ---
+  const txs = allTransactions || [];
+  const totalVolume = txs.filter((t) => t.status === 'closed').reduce((sum, t) => sum + (t.price || 0), 0);
+  const activeDeals = txs.filter((t) => t.status === 'active' || t.status === 'pending').length;
+  const closedByClient = new Map<string, number>();
+  txs.filter((t) => t.status === 'closed').forEach((t) => {
+    closedByClient.set(t.client_id, (closedByClient.get(t.client_id) || 0) + 1);
+  });
+  const repeatClients = Array.from(closedByClient.values()).filter((c) => c >= 2).length;
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-brand-900 mb-6">Dashboard</h1>
@@ -123,6 +134,31 @@ export default async function AdminDashboard() {
           </div>
           <p className="text-2xl font-bold text-brand-900">{inquiryCounts.new}</p>
           <p className="text-sm text-brand-500">New Inquiries</p>
+        </div>
+      </div>
+
+      {/* Transaction widgets */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-xl p-5 border border-brand-100">
+          <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3">
+            <DollarSign className="h-5 w-5 text-emerald-700" />
+          </div>
+          <p className="text-2xl font-bold text-brand-900">${totalVolume >= 1000000 ? `${(totalVolume / 1000000).toFixed(1)}M` : totalVolume >= 1000 ? `${(totalVolume / 1000).toFixed(0)}K` : totalVolume.toLocaleString()}</p>
+          <p className="text-sm text-brand-500">Transaction Volume</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-brand-100">
+          <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3">
+            <Building className="h-5 w-5 text-blue-700" />
+          </div>
+          <p className="text-2xl font-bold text-brand-900">{activeDeals}</p>
+          <p className="text-sm text-brand-500">Active Deals</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-brand-100">
+          <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center mb-3">
+            <Repeat className="h-5 w-5 text-purple-700" />
+          </div>
+          <p className="text-2xl font-bold text-brand-900">{repeatClients}</p>
+          <p className="text-sm text-brand-500">Repeat Clients</p>
         </div>
       </div>
 
