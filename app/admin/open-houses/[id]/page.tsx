@@ -23,16 +23,20 @@ type OpenHouseDetail = {
 
 type Visitor = {
   id: string;
-  client_id: string | null;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string | null;
+  client_id: string;
   working_with_agent: boolean;
   agent_name: string | null;
   how_heard: string | null;
   notes: string | null;
   signed_in_at: string;
+  clients: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string | null;
+  };
+  tags: { name: string; color: string }[];
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -55,10 +59,24 @@ export default function OpenHouseDetailPage() {
     const supabase = createClient();
     const [ohRes, visitorsRes] = await Promise.all([
       supabase.from('open_houses').select('*').eq('id', id).single(),
-      supabase.from('open_house_visitors').select('*').eq('open_house_id', id).order('signed_in_at', { ascending: false }),
+      supabase.from('open_house_visitors').select('*, clients(id, first_name, last_name, email, phone)').eq('open_house_id', id).order('signed_in_at', { ascending: false }),
     ]);
     setOh(ohRes.data);
-    setVisitors(visitorsRes.data || []);
+    // Fetch tags for each visitor's client
+    const rawVisitors = visitorsRes.data || [];
+    const clientIds = rawVisitors.map((v: any) => v.client_id).filter(Boolean);
+    let tagMap: Record<string, { name: string; color: string }[]> = {};
+    if (clientIds.length > 0) {
+      const { data: ctData } = await supabase
+        .from('client_tags')
+        .select('client_id, tags(name, color)')
+        .in('client_id', clientIds);
+      (ctData || []).forEach((ct: any) => {
+        if (!tagMap[ct.client_id]) tagMap[ct.client_id] = [];
+        if (ct.tags) tagMap[ct.client_id].push(ct.tags);
+      });
+    }
+    setVisitors(rawVisitors.map((v: any) => ({ ...v, tags: tagMap[v.client_id] || [] })));
     setLoading(false);
   }, [id]);
 
@@ -193,14 +211,21 @@ export default function OpenHouseDetailPage() {
                   <tr
                     key={v.id}
                     className="hover:bg-brand-50/50 cursor-pointer transition-colors"
-                    onClick={() => v.client_id && router.push(`/admin/clients/${v.client_id}`)}
+                    onClick={() => router.push(`/admin/clients/${v.client_id}`)}
                   >
                     <td className="px-4 py-3">
-                      <p className="font-medium text-brand-900">{v.first_name} {v.last_name}</p>
-                      <p className="text-xs text-brand-400 md:hidden">{v.email}</p>
+                      <p className="font-medium text-brand-900">{v.clients.first_name} {v.clients.last_name}</p>
+                      <p className="text-xs text-brand-400 md:hidden">{v.clients.email}</p>
+                      {v.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {v.tags.map((tag) => (
+                            <span key={tag.name} className="inline-block px-1.5 py-0.5 rounded-full text-[10px] font-medium text-white" style={{ backgroundColor: tag.color }}>{tag.name}</span>
+                          ))}
+                        </div>
+                      )}
                     </td>
-                    <td className="px-4 py-3 text-brand-600 hidden md:table-cell">{v.email}</td>
-                    <td className="px-4 py-3 text-brand-600 hidden lg:table-cell">{v.phone || '—'}</td>
+                    <td className="px-4 py-3 text-brand-600 hidden md:table-cell">{v.clients.email}</td>
+                    <td className="px-4 py-3 text-brand-600 hidden lg:table-cell">{v.clients.phone || '—'}</td>
                     <td className="px-4 py-3">
                       {v.working_with_agent ? (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">

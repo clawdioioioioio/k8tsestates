@@ -121,19 +121,18 @@ serve(async (req) => {
       }
     }
 
-    // Create visitor record
-    await supabase.from("open_house_visitors").insert({
-      open_house_id: openHouse.id,
-      client_id: clientId,
-      first_name,
-      last_name,
-      email: normalizedEmail,
-      phone: phone || null,
-      working_with_agent: working_with_agent || false,
-      agent_name: agent_name || null,
-      how_heard: how_heard || null,
-      notes: notes || null,
-    });
+    // Create visitor record (upsert — skip if already signed in)
+    await supabase.from("open_house_visitors").upsert(
+      {
+        open_house_id: openHouse.id,
+        client_id: clientId,
+        working_with_agent: working_with_agent || false,
+        agent_name: agent_name || null,
+        how_heard: how_heard || null,
+        notes: notes || null,
+      },
+      { onConflict: "open_house_id,client_id", ignoreDuplicates: true }
+    );
 
     // Create interaction record
     await supabase.from("interactions").insert({
