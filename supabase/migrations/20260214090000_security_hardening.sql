@@ -10,7 +10,11 @@ CREATE TABLE admin_users (
 
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 
--- Bootstrap: only existing admins (via current is_admin) can manage this table
+-- Authenticated users can check if their own email is in the admin list
+CREATE POLICY "Check own admin status" ON admin_users
+  FOR SELECT USING (email = (SELECT auth.jwt() ->> 'email'));
+
+-- Admins get full CRUD (add/remove other admins)
 CREATE POLICY "Admin full access" ON admin_users
   FOR ALL USING (is_admin()) WITH CHECK (is_admin());
 
