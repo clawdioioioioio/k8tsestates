@@ -181,6 +181,35 @@
   }
 }
 
+/* Tiptap Editor */
+.tiptap {
+  outline: none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-brand-300);
+  pointer-events: none;
+  height: 0;
+}
+.tiptap h2 { font-size: 1.5rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+.tiptap h3 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.tiptap p { margin: 0.5rem 0; }
+.tiptap ul, .tiptap ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+.tiptap ul { list-style: disc; }
+.tiptap ol { list-style: decimal; }
+.tiptap blockquote { border-left: 3px solid var(--color-brand-200); padding-left: 1rem; margin: 1rem 0; color: var(--color-brand-600); }
+.tiptap img { max-width: 100%; border-radius: 0.75rem; margin: 1rem 0; }
+.tiptap a { color: var(--color-accent-600); text-decoration: underline; }
+
+/* line-clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
